@@ -2,7 +2,8 @@
 'use client';
 import React from "react";
 import Image from "next/image";
-import { useCart } from "../context/CartContext";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
 
 export default function ProductDetails({ producto }) {
   // Convertir el precio a número (asumiendo que es necesario)
@@ -11,7 +12,10 @@ export default function ProductDetails({ producto }) {
     // precio: producto.precio.toNumber(),
   };
   
-  const {addToCart} = useCart();
+  const {addToCart} = useContext(CartContext);
+  const handleAddToCart = () =>{
+    addToCart(producto.id)
+  }
 
   return (
     <div className="container mx-auto py-8 shadow-xl">
@@ -33,7 +37,7 @@ export default function ProductDetails({ producto }) {
           </p>
           <button
             className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors duration-300"
-            onClick={()=>addToCart(producto)}
+            onClick={handleAddToCart}
           >
             Agregar al carrito
           </button>

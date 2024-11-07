@@ -1,12 +1,12 @@
 // Componente para el resumen y total del carrito
 
 "use client";
-import { useCart } from "../context/CartContext";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext";
 
 export default function CartSummary() {
-  const { cart } = useCart();
-
-  const total = cart.reduce((acc, item) => acc + item.precio * item.quantity, 0);
+  
+  const {total} = useContext(CartContext);
 
   return (
     <div className="mt-8 p-4 border-t">

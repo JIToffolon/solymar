@@ -7,65 +7,31 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model categorias {
-  id          Int     @id @default(autoincrement())
-  nombre      String? @db.VarChar(255)
-  descripcion String? @db.Text
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String
+  name      String?
+  cart      Cart?     // Relación uno a uno con Cart
+  createdAt DateTime  @default(now()) 
+  updatedAt DateTime  @updatedAt
 }
 
-model clientes {
-  id            Int       @id @default(autoincrement())
-  nombre        String    @db.VarChar(100)
-  email         String    @unique(map: "email") @db.VarChar(100)
-  telefono      String?   @db.VarChar(15)
-  direccion     String?   @db.Text
-  ciudad        String?   @db.VarChar(50)
-  codigo_postal String?   @db.VarChar(10)
-  created_at    DateTime? @default(now()) @db.Timestamp(0)
-  ordenes       ordenes[]
+model Cart {
+  id        String    @id @default(cuid())
+  userId    String    @unique
+  user      User      @relation(fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
-model detalles_ordenes {
-  id          Int       @id @default(autoincrement())
-  orden_id    Int
-  producto_id Int
-  cantidad    Int
-  precio      Decimal   @db.Decimal(30, 2)
-  ordenes     ordenes   @relation(fields: [orden_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "detalles_ordenes_ibfk_1")
-  productos   productos @relation(fields: [producto_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "detalles_ordenes_ibfk_2")
-
-  @@index([orden_id], map: "orden_id")
-  @@index([producto_id], map: "producto_id")
-}
-
-model ordenes {
-  id               Int                @id @default(autoincrement())
-  cliente_id       Int
-  fecha_orden      DateTime?          @default(now()) @db.Timestamp(0)
-  total            Decimal            @db.Decimal(30, 2)
-  estado           ordenes_estado?    @default(pendiente)
-  detalles_ordenes detalles_ordenes[]
-  clientes         clientes           @relation(fields: [cliente_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "ordenes_ibfk_1")
-
-  @@index([cliente_id], map: "cliente_id")
-}
-
-model productos {
-  id               Int                @id @default(autoincrement())
-  nombre           String?            @db.VarChar(255)
-  descripcion      String?            @db.Text
-  precio           Decimal?           @db.Decimal(10, 2)
-  stock            Int?
-  categoria_id     Int?
-  imagen_url       String?            @db.VarChar(255)
-  created_at       DateTime?          @default(now()) @db.Timestamp(0)
-  detalles_ordenes detalles_ordenes[]
-}
-
-enum ordenes_estado {
-  pendiente
-  procesando
-  enviado
-  completado
-  cancelado
+model CartItem {
+  id        String    @id @default(cuid())
+  cartId    String
+  cart      Cart      @relation(fields: [cartId], references: [id])
+  productId String
+  quantity  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
