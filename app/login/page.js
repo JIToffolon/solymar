@@ -1,11 +1,10 @@
-import React from 'react';
-import LoginForm from '../components/LoginForm';
+import LoginForm from "../components/LoginForm";
 
-// app/page.js o app/home/page.js (dependiendo de cómo esté estructurada tu aplicación)
-export default function HomePage() {
+export default function LoginPage() {
   return (
-    <div className="flex flex-col items-center justify-center flex-grow mt-5 home-container">
-      <LoginForm/>
+    <div className="max-w-md mx-auto mt-10">
+      <h1 className="text-2xl font-bold text-center mb-6 text-gray-700">Iniciar Sesión</h1>
+      <LoginForm />
     </div>
   );
 }

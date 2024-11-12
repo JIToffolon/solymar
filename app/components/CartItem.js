@@ -1,35 +1,30 @@
-// Componente para cada producto en el carrito
-'use client';
-import { useContext } from "react";
-import { CartContext } from "../context/CartContext";
 
-export default function CartItem({ item }) {
-  const { removeFromCart, updateQuantity } = useContext(CartContext);
-  const handleQuantityChange = (e) =>{
-    updateQuantity(item.id,e.target.value)
-  };
-  const handleRemoveCartItem = () => {
-    removeFromCart(item.id);
-  }
-
-
+export default function CartItem({ item, onQuantityChange, onRemove }) {
   return (
-    <div className="flex justify-between items-center p-4 border-b">
+    <div className="flex items-center justify-between border p-4 rounded">
       <div>
-        <h2 className="text-lg font-bold">${item.productos.nombre}</h2>
-        <p>${item.productos.precio}</p>
+        <h3 className="font-medium">{item.product.name}</h3>
+        <div className="flex items-center space-x-2 mt-2">
+          <button
+            onClick={() => onQuantityChange(item.id, Math.max(0, item.quantity - 1))}
+            className="px-2 py-1 bg-gray-200 rounded"
+          >
+            -
+          </button>
+          <span>{item.quantity}</span>
+          <button
+            onClick={() => onQuantityChange(item.id, item.quantity + 1)}
+            className="px-2 py-1 bg-gray-200 rounded"
+          >
+            +
+          </button>
+        </div>
       </div>
-      <div className="flex items-center">
-        <input
-          type="number"
-          value={item.cantidad}
-          onChange={handleQuantityChange}
-          className="w-16 border rounded px-2"
-          min="1"
-        />
+      <div className="flex items-center space-x-2">
+        <span className="text-gray-900 font-medium">${(item.product.price * item.quantity).toFixed(2)}</span>
         <button
-          onClick={handleRemoveCartItem}
-          className="text-red-600 ml-4"
+          onClick={() => onRemove(item.id)}
+          className="text-red-600 hover:text-red-800"
         >
           Eliminar
         </button>

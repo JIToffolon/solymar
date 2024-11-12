@@ -1,100 +1,274 @@
-'use client';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+// 'use client';
+// import { useState } from 'react';
+// import { useRouter } from 'next/navigation';
+
+// export default function RegisterForm() {
+//   const [formData, setFormData] = useState({ email: '', password: '', name: '' });
+//   const [error, setError] = useState('');
+//   const [loading, setLoading] = useState(false);
+//   const router = useRouter();
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setFormData({ ...formData, [name]: value });
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+//     setError('');
+
+//     try {
+//       const response = await fetch('/api/auth/register', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(formData),
+//       });
+
+//       const result = await response.json();
+
+//       if (!response.ok) {
+//         setError(result.error || 'Registration failed');
+//         setLoading(false);
+//         return;
+//       }
+
+//       // Redirigir o mostrar un mensaje de éxito
+//       alert('Registro exitoso');
+//       router.push('/dashboard'); // Cambia '/dashboard' a la página que desees redirigir
+//     } catch (err) {
+//       console.error('Error:', err);
+//       setError('An error occurred. Please try again.');
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="max-w-md mx-auto my-10 bg-white p-6 rounded-lg shadow-md">
+//       <h2 className="text-2xl font-bold text-center mb-6">Registrarse</h2>
+//       {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+//       <form onSubmit={handleSubmit} className="space-y-4">
+//         <div>
+//           <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nombre</label>
+//           <input
+//             type="text"
+//             id="name"
+//             name="name"
+//             value={formData.name}
+//             onChange={handleChange}
+//             required
+//             className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+//           />
+//         </div>
+//         <div>
+//           <label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+//           <input
+//             type="email"
+//             id="email"
+//             name="email"
+//             value={formData.email}
+//             onChange={handleChange}
+//             required
+//             className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+//           />
+//         </div>
+//         <div>
+//           <label htmlFor="password" className="block text-sm font-medium text-gray-700">Contraseña</label>
+//           <input
+//             type="password"
+//             id="password"
+//             name="password"
+//             value={formData.password}
+//             onChange={handleChange}
+//             required
+//             className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+//           />
+//         </div>
+//         <button
+//           type="submit"
+//           disabled={loading}
+//           className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+//         >
+//           {loading ? 'Registrando...' : 'Registrarse'}
+//         </button>
+//       </form>
+//     </div>
+//   );
+// }
+
+"use client";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
-  const [formData, setFormData] = useState({ email: '', password: '', name: '' });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const router = useRouter();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
+    const formData = new FormData(e.currentTarget);
 
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.get("name"),
+          email: formData.get("email"),
+          password: formData.get("password"),
+        }),
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        setError(result.error || 'Registration failed');
-        setLoading(false);
-        return;
+      if (res.ok) {
+        router.push("/login");
+      } else {
+        const data = await res.json();
+        setError(data.error);
       }
-
-      // Redirigir o mostrar un mensaje de éxito
-      alert('Registro exitoso');
-      router.push('/dashboard'); // Cambia '/dashboard' a la página que desees redirigir
-    } catch (err) {
-      console.error('Error:', err);
-      setError('An error occurred. Please try again.');
-    } finally {
-      setLoading(false);
+    } catch (error) {
+      setError("Something went wrong");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto my-10 bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center mb-6">Registrarse</h2>
-      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Nombre</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-100">
+      {error && (
+        <div className="bg-red-50 text-red-600 p-4 rounded-md border border-red-100 flex items-center">
+          <svg 
+            className="w-5 h-5 mr-2 flex-shrink-0" 
+            fill="currentColor" 
+            viewBox="0 0 20 20"
+          >
+            <path 
+              fillRule="evenodd" 
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" 
+              clipRule="evenodd" 
+            />
+          </svg>
+          {error}
         </div>
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-700">Correo Electrónico</label>
+      )}
+
+      <div className="space-y-1">
+        <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          Nombre
+        </label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          required
+          placeholder="Tu nombre"
+          className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-400"
+        />
+      </div>
+
+      <div className="space-y-1">
+        <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          Email
+        </label>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          required
+          placeholder="ejemplo@email.com"
+          className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-400"
+        />
+        <p className="mt-1 text-sm text-gray-500">
+          Nunca compartiremos tu email con nadie más.
+        </p>
+      </div>
+
+      <div className="space-y-1">
+        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+          Contraseña
+        </label>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          required
+          placeholder="••••••••"
+          className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors placeholder-gray-400"
+        />
+        <p className="mt-1 text-sm text-gray-500">
+          Mínimo 8 caracteres
+        </p>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex items-center">
           <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
+            type="checkbox"
+            id="terms"
+            name="terms"
             required
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
           />
+          <label htmlFor="terms" className="ml-2 block text-sm text-gray-600">
+            Acepto los{' '}
+            <a href="#" className="text-red-600 hover:text-red-700 font-medium">
+              términos y condiciones
+            </a>
+          </label>
         </div>
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-700">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
-        </div>
+
         <button
           type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="w-full py-3 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 font-medium transition-colors shadow-sm hover:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {loading ? 'Registrando...' : 'Registrarse'}
+          Crear cuenta
         </button>
-      </form>
-    </div>
+      </div>
+
+      <div className="text-center text-sm text-gray-600">
+        ¿Ya tienes una cuenta?{' '}
+        <a href="/login" className="text-red-600 hover:text-red-700 font-medium">
+          Inicia sesión aquí
+        </a>
+      </div>
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">
+            O regístrate con
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <button
+          type="button"
+          className="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+        >
+          <img
+            className="h-5 w-5 mr-2"
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            alt="Google"
+          />
+          Google
+        </button>
+        <button
+          type="button"
+          className="flex items-center justify-center px-4 py-2 border border-gray-200 rounded-md hover:bg-gray-50 transition-colors"
+        >
+          <img
+            className="h-5 w-5 mr-2"
+            src="https://www.svgrepo.com/show/475647/facebook-color.svg"
+            alt="Facebook"
+          />
+          Facebook
+        </button>
+      </div>
+    </form>
   );
 }

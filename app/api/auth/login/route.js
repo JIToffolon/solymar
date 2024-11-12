@@ -35,10 +35,10 @@ export async function POST(req) {
       { expiresIn: '24h' }
     )
     
-    const { password: _, ...userWithoutPassword } = user
+    // const { password: _, ...userWithoutPassword } = user
     
     return NextResponse.json({
-      user: userWithoutPassword,
+      // user: userWithoutPassword,
       token
     })
   } catch (error) {
@@ -48,3 +48,5 @@ export async function POST(req) {
     )
   }
 }
+
+
