@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Cart() {
   const { data: session } = useSession();
@@ -9,7 +10,8 @@ export default function Cart() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(null);
-
+  const router = useRouter();
+  
   useEffect(() => {
     if (session) {
       fetchCart();
@@ -233,9 +235,7 @@ export default function Cart() {
             </div>
 
             <button
-              onClick={() => {
-                /* Implementar checkout */
-              }}
+              onClick={() => router.push("/checkout")}
               className="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 font-medium transition-colors shadow-sm hover:shadow-md"
             >
               Proceder al pago

@@ -42,7 +42,7 @@ export default function HomePage() {
       title: "Contacto",
       description: "Estamos para ayudarte",
       icon: Phone,
-      link: "/contact",
+      link: "/contacto",
       color: "from-red-800 to-red-900",
     },
   ];
@@ -390,6 +390,7 @@ export default function HomePage() {
                 transition={{ delay: index * 0.2 }}
                 className="relative h-[400px] rounded-2xl shadow-xl overflow-hidden group cursor-pointer"
               >
+                <Link href={card.link}>
                 {/* Fondo con gradiente */}
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-90 group-hover:opacity-100 transition-opacity duration-500`}
@@ -406,6 +407,7 @@ export default function HomePage() {
                   </p>
 
                   {/* Botón con efecto hover */}
+
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     className="flex items-center gap-2 bg-white text-red-600 px-6 py-3 rounded-full font-medium group-hover:bg-opacity-100 transition-all"
@@ -420,6 +422,7 @@ export default function HomePage() {
 
                 {/* Patrón decorativo (opcional) */}
                 <div className="absolute inset-0 opacity-20 bg-pattern mix-blend-soft-light" />
+                </Link>
               </motion.div>
             ))}
           </div>

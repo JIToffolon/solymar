@@ -4,7 +4,7 @@ import prisma from "@/app/lib/prisma";
 
   export async function GET(request, context) {
     try {
-      const id = context.params.id; // Extraemos el ID de context.params
+      const {id} = await context.params; // Extraemos el ID de context.params
       console.log("Buscando producto con ID:", id);
   
       const product = await prisma.product.findUnique({
