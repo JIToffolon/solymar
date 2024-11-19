@@ -6,7 +6,8 @@ import { authOptions } from '../../../auth/[...nextauth]/route';
 const prisma = new PrismaClient();
 
 // Modificar cantidad
-export async function PATCH(request, { params }) {
+export async function PATCH(request, props) {
+  const params = await props.params;
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -44,7 +45,8 @@ export async function PATCH(request, { params }) {
 }
 
 // Eliminar item
-export async function DELETE(request, { params }) {
+export async function DELETE(request, props) {
+  const params = await props.params;
   try {
     const session = await getServerSession(authOptions);
     if (!session) {

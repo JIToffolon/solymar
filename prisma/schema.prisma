@@ -12,8 +12,8 @@ model User {
   email     String    @unique
   password  String
   name      String?
-  cart      Cart?     // Relación uno a uno con Cart
-  orders    Orders[]   // Cambiado de Order[] a Orders[]
+  cart      Cart?
+  orders    Orders[]
   createdAt DateTime  @default(now()) 
   updatedAt DateTime  @updatedAt
 }
@@ -44,12 +44,12 @@ model Product {
   description String?
   price      Decimal  @db.Decimal(10,2)
   imageUrl   String?
-  featured    Boolean  @default(false)
-  active      Boolean  @default(true)
+  featured   Boolean  @default(false)
+  active     Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   cartItems  CartItem[]
-  orderItems  OrderItem[] 
+  orderItems OrderItem[] 
 }
 
 model Orders {  
@@ -68,11 +68,14 @@ model Orders {
 
 model OrderItem {
   id        String    @id @default(cuid())
+  order     Orders    @relation(fields: [orderId], references: [id])
   orderId   String
-  order     Orders    @relation(fields: [orderId], references: [id]) 
-  productId String
   product   Product   @relation(fields: [productId], references: [id])
+  productId String
   quantity  Int
   price     Decimal   @db.Decimal(10,2)
+
+  @@index([orderId])
+  @@index([productId])
 }
 
