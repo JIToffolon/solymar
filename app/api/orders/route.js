@@ -90,3 +90,39 @@ export async function POST(request) {
     );
   }
 }
+
+
+export async function GET(request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
+    const orders = await prisma.orders.findMany({
+      where: {
+        userId: session.user.id,
+        status: {
+          in: ['approved', 'pending']
+        }
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      include: {
+        items: {
+          include: {
+            product: true
+          }
+        }
+      }
+    });
+
+    return NextResponse.json(orders);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Error al obtener las órdenes" },
+      { status: 500 }
+    );
+  }
+}

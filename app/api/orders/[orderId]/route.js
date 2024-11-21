@@ -3,44 +3,6 @@ import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 
-// const prisma = new PrismaClient();
-
-// export async function GET(request, { params }) {
-//   try {
-//     const session = await getServerSession(authOptions);
-//     if (!session) {
-//       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
-//     }
-
-//     const orderId = params.orderId;
-//     const order = await prisma.orders.findUnique({
-//       where: {
-//         id: orderId,
-//         userId: session.user.id // Asegurarse que la orden pertenece al usuario
-//       },
-//       include: {
-//         items: {
-//           include: {
-//             product: true
-//           }
-//         }
-//       }
-//     });
-
-//     if (!order) {
-//       return NextResponse.json({ error: "Orden no encontrada" }, { status: 404 });
-//     }
-
-//     return NextResponse.json(order);
-//   } catch (error) {
-//     console.error("Error fetching order:", error);
-//     return NextResponse.json(
-//       { error: "Error al obtener la orden" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
 const prisma = new PrismaClient();
 
 export async function GET(request, context) {
@@ -73,7 +35,8 @@ export async function GET(request, context) {
           include: {
             product: true
           }
-        }
+        },
+        paymentDetails: true 
       }
     });
 

@@ -62,6 +62,7 @@ model Orders {
   installments    Int         @default(1)
   paymentMethod   String?
   items           OrderItem[]
+  paymentDetails  PaymentDetails?
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
@@ -79,3 +80,16 @@ model OrderItem {
   @@index([productId])
 }
 
+model PaymentDetails {
+  id                  String    @id @default(cuid())
+  orderId            String    @unique
+  order              Orders    @relation(fields: [orderId], references: [id])
+  paymentType        String    // ticket, bank_transfer, credit_card, etc.
+  expirationDate     DateTime?
+  paymentInstructions Json?    // Instrucciones específicas del pago
+  additionalData     Json?     // Datos adicionales del pago
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([orderId])
+}

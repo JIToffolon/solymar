@@ -1,5 +1,5 @@
-import ProductList from "../components/ProductList";
-import { roboto } from "../ui/fonts";
+import ProductList from "@/app/components/ProductList";
+import { roboto } from "@/app/ui/fonts";
 export default function Products() {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -15,7 +15,7 @@ import {
   Users,
   Phone,
 } from "lucide-react";
-import { monserrat, roboto } from "./ui/fonts";
+import { monserrat, roboto } from "../ui/fonts";
 
 export default function HomePage() {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -89,35 +89,6 @@ export default function HomePage() {
       (prev) => (prev - 1 + featuredProducts.length) % featuredProducts.length
     );
   };
-
-  // // Componente de Loading para el carrusel de productos
-  // const ProductLoading = () => (
-  //   <div className="h-[500px] bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center">
-  //     <div className="text-center text-white">
-  //       <Loader className="w-8 h-8 mb-4 mx-auto animate-spin" />
-  //       <p className="text-lg">Cargando productos destacados...</p>
-  //     </div>
-  //   </div>
-  // );
-
-  // // Componente de Error para el carrusel de productos
-  // const ProductError = () => (
-  //   <div className="h-[500px] bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center">
-  //     <div className="text-center text-white p-6">
-  //       <h3 className="text-xl font-bold mb-4">
-  //         Error al cargar los productos
-  //       </h3>
-  //       <p className="mb-6">{error}</p>
-  //       <button
-  //         onClick={fetchFeaturedProducts}
-  //         className="bg-white text-red-600 px-6 py-2 rounded-full hover:bg-gray-100 transition-colors"
-  //       >
-  //         Intentar nuevamente
-  //       </button>
-  //     </div>
-  //   </div>
-  // );
-
   return (
     <div className="min-h-screen font-['Montserrat'] container mx-auto px-0 max-w-[100%]">
       <section className="relative h-[800px]  bg-gradient-to-r from-red-600 to-red-800 rounded-xl ">
@@ -391,37 +362,37 @@ export default function HomePage() {
                 className="relative h-[400px] rounded-2xl shadow-xl overflow-hidden group cursor-pointer"
               >
                 <Link href={card.link}>
-                {/* Fondo con gradiente */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-90 group-hover:opacity-100 transition-opacity duration-500`}
-                />
+                  {/* Fondo con gradiente */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-90 group-hover:opacity-100 transition-opacity duration-500`}
+                  />
 
-                {/* Contenido central */}
-                <div className="relative h-full p-8 flex flex-col items-center justify-center text-white">
-                  <card.icon className="w-16 h-16 mb-6 group-hover:scale-110 transition-transform duration-500" />
-                  <h3 className="text-3xl font-bold mb-4 text-center">
-                    {card.title}
-                  </h3>
-                  <p className="text-lg text-center mb-8 opacity-90">
-                    {card.description}
-                  </p>
+                  {/* Contenido central */}
+                  <div className="relative h-full p-8 flex flex-col items-center justify-center text-white">
+                    <card.icon className="w-16 h-16 mb-6 group-hover:scale-110 transition-transform duration-500" />
+                    <h3 className="text-3xl font-bold mb-4 text-center">
+                      {card.title}
+                    </h3>
+                    <p className="text-lg text-center mb-8 opacity-90">
+                      {card.description}
+                    </p>
 
-                  {/* Botón con efecto hover */}
+                    {/* Botón con efecto hover */}
 
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    className="flex items-center gap-2 bg-white text-red-600 px-6 py-3 rounded-full font-medium group-hover:bg-opacity-100 transition-all"
-                  >
-                    <span>Explorar</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  </motion.button>
-                </div>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      className="flex items-center gap-2 bg-white text-red-600 px-6 py-3 rounded-full font-medium group-hover:bg-opacity-100 transition-all"
+                    >
+                      <span>Explorar</span>
+                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                    </motion.button>
+                  </div>
 
-                {/* Overlay decorativo */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  {/* Overlay decorativo */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-                {/* Patrón decorativo (opcional) */}
-                <div className="absolute inset-0 opacity-20 bg-pattern mix-blend-soft-light" />
+                  {/* Patrón decorativo (opcional) */}
+                  <div className="absolute inset-0 opacity-20 bg-pattern mix-blend-soft-light" />
                 </Link>
               </motion.div>
             ))}
