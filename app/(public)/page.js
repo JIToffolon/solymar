@@ -138,7 +138,7 @@ export default function HomePage() {
                     {/* Contenedor principal del carrusel */}
                     <div className="bg-white/10 backdrop-blur-md rounded-xl p-6">
                       <div className="relative h-[600px]">
-                        <AnimatePresence mode="wait">
+                        <AnimatePresence mode="sync">
                           {featuredProducts.map((product, idx) => (
                             <motion.div
                               key={product.id}

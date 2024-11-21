@@ -91,7 +91,7 @@ export default function AdminDashboard() {
 
         <div className="bg-gray-200 p-6 rounded-xl shadow-sm">
           <div className="flex items-center justify-between">
-            <h3 className="text-gray-500 text-sm font-['Roboto']">Conversión</h3>
+            <h3 className="text-gray-500 text-sm font-['Roboto']">Porcentaje de Ordenes Aprobadas</h3>
             <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
