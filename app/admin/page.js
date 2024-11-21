@@ -51,7 +51,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const COLORS = ['#EF4444', '#10B981', '#F59E0B', '#6366F1'];
+  const COLORS = [ '#10B981' ,'#EF4444', '#F59E0B', '#6366F1'];
 
   return (
     <div className="space-y-6">
