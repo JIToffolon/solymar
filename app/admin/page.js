@@ -5,8 +5,9 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell
 } from 'recharts';
+import { withAdminAuth } from "../components/auth/withAdminAuth";
 
-export default function AdminDashboard() {
+function AdminDashboard() {
   const [stats, setStats] = useState({
     totalOrders: 0,
     totalSales: 0,
@@ -187,3 +188,6 @@ export default function AdminDashboard() {
     </div>
   );
 }
+
+
+export default withAdminAuth(AdminDashboard);

@@ -47,7 +47,7 @@ export default function Navbar() {
                   <ShoppingCartIcon className="w-7 h-7" />
                 </Link>
                 <button
-                  onClick={() => signOut()}
+                  onClick={() => signOut({callbackUrl:'/login'})}
                   className="bg-white text-red-600 px-4 py-2 rounded hover:bg-red-100 transition-colors font-medium"
                 >
                   Cerrar Sesión
