@@ -26,7 +26,7 @@ export default function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-100">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md mx-auto bg-gray-200 p-8 rounded-lg shadow-lg border border-gray-100 text-gray-700">
       {error && (
         <div className="bg-red-50 text-red-600 p-4 rounded-md border border-red-100 flex items-center">
           <svg 
@@ -52,7 +52,7 @@ export default function LoginForm() {
           type="email"
           name="email"
           required
-          className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+          className="mt-1 block w-full px-4 py-3 border  rounded-md "
           placeholder="ejemplo@email.com"
         />
       </div>
@@ -65,7 +65,7 @@ export default function LoginForm() {
           type="password"
           name="password"
           required
-          className="mt-1 block w-full px-4 py-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-colors"
+          className="mt-1 block w-full px-4 py-3 border rounded-md "
           placeholder="••••••••"
         />
       </div>
@@ -75,9 +75,9 @@ export default function LoginForm() {
           <input
             type="checkbox"
             id="remember"
-            className="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
+            className="h-4 w-4 rounded"
           />
-          <label htmlFor="remember" className="ml-2 block text-gray-600">
+          <label htmlFor="remember" className="ml-2 mr-2 block text-gray-600">
             Recordarme
           </label>
         </div>
@@ -88,14 +88,14 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        className="w-full py-3 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 font-medium transition-colors shadow-sm hover:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
+        className="w-full py-3 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none font-medium transition-colors shadow-sm hover:shadow-md disabled:bg-gray-400 disabled:cursor-not-allowed"
       >
         Iniciar sesión
       </button>
       
       <div className="text-center text-sm text-gray-600">
-        ¿No tienes una cuenta?{' '}
-        <a href="/register" className="text-red-600 hover:text-red-700 font-medium">
+        ¿No tienes una cuenta?
+        <a href="/register" className="text-red-600 hover:text-red-700 font-medium ml-2">
           Regístrate aquí
         </a>
       </div>

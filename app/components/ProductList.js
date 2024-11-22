@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import ProductCard from "./ProductCard"; // Importa el ProductCard
+import ProductCard from "./ProductCard"; 
 import Link from "next/link";
 
 const ProductList = () => {
@@ -57,8 +57,6 @@ const ProductList = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* Opcional: Título de la sección */}
-      {/* <h1 className="text-3xl font-bold text-gray-800 mb-8">Nuestros Productos</h1> */}
 
       {/* Grid de productos */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

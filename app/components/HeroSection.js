@@ -1,23 +1,78 @@
-// components/HeroSection.jsx
 "use client";
 import React from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, ArrowLeft, ArrowRight } from 'lucide-react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
+import AddToCartButton2 from './addToCartButton2';
+import AddedToCartNotification from './AddedToCartNotification';
 
-const ProductInfo = React.memo(({ product }) => (
- <div className="h-[25%] p-8 flex flex-col justify-between">
-   <h3 className="text-2xl font-bold text-gray-800">{product.name}</h3>
-   <div className="flex justify-between items-center">
-     <span className="text-3xl font-bold text-red-600">
-       ${Number(product.price).toFixed(2)}
-     </span>
-     <button className="bg-red-600 text-white p-4 rounded-full hover:bg-red-700 transition-colors transform hover:scale-105">
-       <ShoppingBag size={24} />
-     </button>
-   </div>
- </div>
-));
+const ProductInfo = React.memo(({ product }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAdded, setIsAdded] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
+
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    try {
+      setIsLoading(true);
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: 1,
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          window.location.href = "/login";
+          return;
+        }
+        throw new Error("Error al agregar al carrito");
+      }
+
+      setIsAdded(true);
+      setShowNotification(true);
+      
+      setTimeout(() => {
+        setIsAdded(false);
+        setShowNotification(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <div className="h-[25%] p-8 flex flex-col justify-between">
+        <h3 className="text-2xl font-bold text-gray-800">{product.name}</h3>
+        <div className="flex justify-between items-center">
+          <span className="text-3xl font-bold text-red-600">
+            ${Number(product.price).toFixed(2)}
+          </span>
+          <AddToCartButton2
+            onClick={handleAddToCart}
+            isLoading={isLoading}
+            isAdded={isAdded}
+            className="transform hover:scale-105"
+          />
+        </div>
+      </div>
+      <AddedToCartNotification 
+        isVisible={showNotification} 
+        productName={product.name}
+      />
+    </>
+  );
+});
 
 const CarouselControls = ({ length, activeIndex, onNext, onPrev }) => (
  <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-6">
@@ -57,9 +112,11 @@ const HeroContent = React.memo(() => (
      <h2 className="text-xl mb-4 font-['Roboto']">Temporada 2024</h2>
      <h1 className="text-6xl font-bold mb-6">SOLYMAR</h1>
      <p className="text-xl mb-8 opacity-90">Descubrí las últimas tendencias</p>
+     <Link href={'/products'}>
      <button className="bg-white text-red-600 px-10 py-4 rounded-full font-medium hover:bg-gray-100 transition-all transform hover:scale-105">
        Explorar Ahora
      </button>
+     </Link>
    </motion.div>
  </div>
 ));
@@ -72,6 +129,7 @@ const CarouselItem = React.memo(({ product }) => (
    transition={{ duration: 0.5 }}
    className="absolute inset-0 cursor-pointer"
  >
+  <Link href={`/products/${product.id}`}>
    <div className="bg-white rounded-xl h-[600px] shadow-xl overflow-hidden">
      <div className="relative h-[75%]">
        <Image
@@ -90,6 +148,7 @@ const CarouselItem = React.memo(({ product }) => (
      </div>
      <ProductInfo product={product} />
    </div>
+   </Link>
  </motion.div>
 ));
 

@@ -24,9 +24,20 @@ const ProductDetail = ({ product }) => {
   const [addedToCart, setAddedToCart] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const feature = [
+    { icon: Truck, text: "Envío gratis" },
+    { icon: Shield, text: "Garantía de calidad" },
+    { icon: RefreshCw, text: "30 días para cambios" },
+  ];
   // Array de imágenes del producto (ajustar según tu estructura de datos)
   const productImages = [product.imageUrl].filter(Boolean);
+  //Para el Futuro con más imagenes.
+  // const productImages = [
+  //   product.imageUrl,
+  //   product.image2,
+  //   product.image3,
+  //   // ... más imágenes
+  // ].filter(Boolean);
 
   const handleAddToCart = async () => {
     try {
@@ -170,10 +181,10 @@ const ProductDetail = ({ product }) => {
 
               {/* Cantidad y Botón de Compra */}
               <div className="flex gap-4 mb-8">
-                <div className="flex items-center border-2 border-gray-200 rounded-lg">
+                <div className="flex items-center border-2 border-gray-200 rounded-lg cursor-pointer">
                   <button
                     onClick={decrementQuantity}
-                    className="p-3 hover:text-red-600 transition-colors"
+                    className="p-3 hover:text-red-600 transition-colors cursor-pointer"
                     disabled={quantity <= 1}
                   >
                     <Minus className="w-5 h-5" />
@@ -208,15 +219,12 @@ const ProductDetail = ({ product }) => {
                     </>
                   )}
                 </button>
+               
               </div>
 
               {/* Características Adicionales */}
-              <div className="grid grid-cols-3 gap-4 mb-8">
-                {[
-                  { icon: Truck, text: "Envío gratis" },
-                  { icon: Shield, text: "Garantía de calidad" },
-                  { icon: RefreshCw, text: "30 días para cambios" },
-                ].map((feature, index) => (
+              <div className="grid grid-cols-3 gap-4 mb-8 cursor-pointer">
+                {feature.map((feature, index) => (
                   <div
                     key={index}
                     className="flex flex-col items-center text-center p-4 bg-white rounded-xl"

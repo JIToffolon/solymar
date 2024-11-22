@@ -12,7 +12,7 @@ export async function GET(request, context) {
         return NextResponse.json({ error: "No autorizado" }, { status: 401 });
       }
   
-      const { orderId } = context.params;
+      const { orderId } = await context.params;
   
       const order = await prisma.orders.findUnique({
         where: {

@@ -193,7 +193,7 @@ export default function Cart() {
                   </div>
                 </div>
 
-                <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-6 ml-4">
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
