@@ -30,6 +30,5 @@ export const config = {
     "/dashboard/:path*",
     "/cart/:path*",
     "/admin/:path*",
-    // Añade aquí otras rutas que requieran autenticación
   ],
 };

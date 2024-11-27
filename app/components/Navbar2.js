@@ -31,9 +31,11 @@ export default function Navbar() {
           <div className="flex items-center space-x-4">
             {session ? (
               <>
+                <Link href={'/products'}>
                 <span className="text-white">
-                  Bienvenido, {session.user.name || session.user.email}
+                  Marketplace
                 </span>
+                </Link>
                 <Link
                   href="/dashboard"
                   className="text-white hover:text-red-100 transition-colors"

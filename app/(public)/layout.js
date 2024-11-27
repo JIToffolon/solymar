@@ -1,13 +1,13 @@
 import Navbar2 from "../components/Navbar2";
 import Footer from "../components/footer";
 import "../globals.css";
-import { monserrat } from "../ui/fonts";
+import { montserrat } from "../ui/fonts";
 import WhatsAppButton from "../components/WhatsAppButton";
 
 export default function PublicLayout({ children }) {
   return (
     
-      <div className={`${monserrat.className} antialiased bg-white `}>
+      <div className={`${montserrat.className} antialiased bg-white `}>
         
           <div className="estructura">
             <Navbar2 />

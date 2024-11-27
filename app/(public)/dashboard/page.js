@@ -77,14 +77,14 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white shadow-lg rounded-xl p-6">
+          <div className="bg-gray-200 shadow-lg rounded-xl p-6">
             <h2 className="text-xl font-semibold mb-6 text-gray-900 text-center">Mis Órdenes de Compra</h2>
             {orders.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 bg-white rounded-xl">
                 {orders.map((order) => (
                   <div key={order.id} 
                     className="border border-gray-100 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    <div className="flex justify-between items-start">
+                    <div className="flex justify-between items-start e">
                       <div>
                         <p className="font-medium text-gray-900">
                           Orden #{order.id.slice(-8)}

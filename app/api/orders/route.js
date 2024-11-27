@@ -2,9 +2,12 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
-import MercadoPago from "mercadopago";
+import { MercadoPagoConfig, Payment } from "mercadopago";
 
 const prisma = new PrismaClient();
+const client = new MercadoPagoConfig({ 
+  accessToken: process.env.MP_ACCESS_TOKEN 
+});
 
 export async function POST(request) {
   try {
@@ -14,19 +17,14 @@ export async function POST(request) {
     }
 
     const { formData, orderData } = await request.json();
+    console.log("Creando orden:", { formData, orderData });
 
-    // Configurar MercadoPago
-    MercadoPago.configure({
-      access_token: process.env.MP_ACCESS_TOKEN,
-    });
-
-    // Crear la orden en la base de datos
+    // Crear la orden como PENDING
     const order = await prisma.$transaction(async (tx) => {
-      // Crear la orden
       const newOrder = await tx.orders.create({
         data: {
           userId: session.user.id,
-          status: "pending",
+          status: "pending", // Siempre comienza como pending
           total: orderData.total,
           paymentMethod: formData.payment_method_id,
           items: {
@@ -42,55 +40,55 @@ export async function POST(request) {
         }
       });
 
-      // Vaciar el carrito del usuario
-      const cart = await tx.cart.findUnique({
-        where: { userId: session.user.id },
-        include: { items: true }
-      });
-
-      if (cart) {
-        await tx.cartItem.deleteMany({
-          where: { cartId: cart.id }
-        });
-      }
-
       return newOrder;
     });
 
+    console.log("Orden creada:", order);
+
     // Procesar el pago con MercadoPago
-    const payment = await MercadoPago.payment.create({
-      transaction_amount: orderData.total,
-      payment_method_id: formData.payment_method_id,
-      token: formData.token,
-      installments: formData.installments,
-      payer: {
-        email: session.user.email
+    const paymentApi = new Payment(client);
+    const payment = await paymentApi.create({
+      body: {
+        transaction_amount: Number(orderData.total),
+        payment_method_id: formData.payment_method_id,
+        token: formData.token,
+        installments: parseInt(formData.installments),
+        payer: {
+          email: session.user.email
+        },
+        metadata: {
+          order_id: order.id
+        }
       }
     });
 
-    // Actualizar el estado de la orden
-    await prisma.orders.update({
+    console.log("Respuesta de pago:", payment);
+
+    // Actualizar SOLO el paymentId, mantener estado pending
+    const updatedOrder = await prisma.orders.update({
       where: { id: order.id },
       data: {
-        status: payment.status,
-        paymentId: payment.id.toString()
+        paymentId: payment.id.toString(),
+        installments: payment.installments || 1
       }
     });
+
+    console.log("Orden actualizada con paymentId:", updatedOrder);
 
     return NextResponse.json({
       status: payment.status,
-      order_id: order.id
+      order_id: order.id,
+      payment_id: payment.id
     });
 
   } catch (error) {
     console.error("Error processing order:", error);
     return NextResponse.json(
-      { error: "Error al procesar la orden" },
+      { error: "Error al procesar la orden", details: error.message },
       { status: 500 }
     );
   }
 }
-
 
 export async function GET(request) {
   try {

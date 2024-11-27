@@ -59,15 +59,45 @@ model Product {
   updatedAt   DateTime    @updatedAt
   cartItems   CartItem[]
   orderItems  OrderItem[]
+  stockMovements StockMovement[]
 }
 
 model Category {
-  id        String    @id @default(cuid())
-  name      String    @unique
-  products  Product[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          String      @id @default(cuid())
+  name        String      @unique
+  slug        String?     @unique // Para URLs amigables
+  parentId    String?     // Para identificar la categoría padre
+  parent      Category?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    Category[]  @relation("CategoryHierarchy")
+  level       Int         @default(1) // 1 para categorías principales, 2 para subcategorías
+  products    Product[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
+
+enum MovementType {
+  SALE
+  RETURN
+  ADJUSTMENT
+  RESTOCK
+}
+
+model StockMovement {
+  id          String      @id @default(cuid())
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id])
+  quantity    Int         // Negativo para salidas, positivo para entradas
+  reason      String
+  movementType MovementType
+  orderId     String?
+  order       Orders?     @relation(fields: [orderId], references: [id])
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([productId])
+  @@index([orderId])
+}
+
 
 model Orders {  
   id              String      @id @default(cuid())
@@ -80,6 +110,7 @@ model Orders {
   paymentMethod   String?
   items           OrderItem[]
   paymentDetails  PaymentDetails?
+  stockMovements  StockMovement[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }

@@ -166,6 +166,17 @@ export async function POST(request) {
       );
     }
 
+    // Verificar stock disponible
+    const product = await prisma.product.findUnique({
+      where: { id: productId }
+    });
+
+    if (!product) {
+      return NextResponse.json({ 
+        error: "Producto no encontrado" 
+      }, { status: 404 });
+    }
+
     // Buscar o crear el carrito del usuario
     let cart = await prisma.cart.findUnique({
       where: { userId: userId },
@@ -189,13 +200,28 @@ export async function POST(request) {
     });
 
     let updatedItem;
+    let newQuantity = quantity;
+
+    if (existingItem) {
+      newQuantity = existingItem.quantity + quantity;
+    }
+
+    // Verificar si hay suficiente stock
+    if (newQuantity > product.stock) {
+      return NextResponse.json({
+        error: "Stock insuficiente",
+        availableStock: product.stock,
+        requestedQuantity: newQuantity,
+        currentQuantityInCart: existingItem?.quantity || 0
+      }, { status: 400 });
+    }
 
     if (existingItem) {
       // Actualizar cantidad si el item ya existe
       updatedItem = await prisma.cartItem.update({
         where: { id: existingItem.id },
         data: {
-          quantity: existingItem.quantity + quantity,
+          quantity: newQuantity,
         },
         include: {
           product: true,
@@ -218,6 +244,7 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       item: updatedItem,
+      stockRemaining: product.stock - newQuantity
     });
 
   } catch (error) {

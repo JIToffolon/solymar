@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { montserrat, roboto } from "../ui/fonts";
 
 const menuItems = [
   {
@@ -104,7 +105,7 @@ export default function AdminLayout({ children }) {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 font-['Montserrat']">
+    <div className={`${roboto.className} min-h-screen bg-gray-50`}>
       <aside
         className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"

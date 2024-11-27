@@ -7,16 +7,13 @@ const prisma = new PrismaClient();
 
 export async function GET(request, context) {
   try {
-    // Obtener la sesión
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
-    // Obtener el orderId de manera asíncrona
     const { orderId } = await context.params;
 
-    // Validar el orderId
     if (!orderId) {
       return NextResponse.json(
         { error: "ID de orden no proporcionado" }, 
@@ -24,11 +21,40 @@ export async function GET(request, context) {
       );
     }
 
-    // Buscar la orden con sus items y productos
+    // Obtener la URL actual
+    const url = new URL(request.url);
+    // Verificar si es una consulta de polling
+    const isPolling = url.searchParams.get('polling') === 'true';
+
+    // Si es polling, solo devolver la información mínima necesaria
+    if (isPolling) {
+      const orderStatus = await prisma.orders.findUnique({
+        where: {
+          id: orderId,
+          userId: session.user.id
+        },
+        select: {
+          id: true,
+          status: true,
+          paymentId: true
+        }
+      });
+
+      if (!orderStatus) {
+        return NextResponse.json(
+          { error: "Orden no encontrada" }, 
+          { status: 404 }
+        );
+      }
+
+      return NextResponse.json(orderStatus);
+    }
+
+    // Si no es polling, devolver la orden completa como antes
     const order = await prisma.orders.findUnique({
       where: {
         id: orderId,
-        userId: session.user.id // Verificar que la orden pertenece al usuario
+        userId: session.user.id
       },
       include: {
         items: {
@@ -46,6 +72,12 @@ export async function GET(request, context) {
         { status: 404 }
       );
     }
+
+    console.log("Estado actual de la orden:", {
+      orderId: order.id,
+      status: order.status,
+      paymentId: order.paymentId
+    });
 
     return NextResponse.json(order);
 

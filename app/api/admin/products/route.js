@@ -2,14 +2,33 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma";
 
 // GET - Listar productos
-export async function GET() {
+export async function GET(request) {
   try {
-    const products = await prisma.product.findMany({
-      include: {
-        category: true,
-      },
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const skip = (page - 1) * limit;
+
+    const [products, total] = await Promise.all([
+      prisma.product.findMany({
+        include: {
+          category: true,
+        },
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.product.count()
+    ]);
+
+    return NextResponse.json({
+      products,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      total,
     });
-    return NextResponse.json(products);
   } catch (error) {
     return NextResponse.json(
       { error: "Error al obtener productos" },

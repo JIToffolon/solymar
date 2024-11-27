@@ -1,19 +1,21 @@
 "use client";
-import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { montserrat, roboto } from "@/app/ui/fonts";
 
 export default function Pending() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const paymentId = searchParams?.get('payment_id');
-  const orderId = searchParams?.get('order_id');
+  const paymentId = searchParams?.get("payment_id");
+  const orderId = searchParams?.get("order_id");
 
   useEffect(() => {
-    const fetchOrderDetails = async () => {
+    const checkOrderStatus = async () => {
       if (!orderId) {
         setLoading(false);
         return;
@@ -21,9 +23,16 @@ export default function Pending() {
 
       try {
         const response = await fetch(`/api/orders/${orderId}`);
-        if (!response.ok) throw new Error('Error al obtener los detalles de la orden');
+        if (!response.ok)
+          throw new Error("Error al obtener los detalles de la orden");
         const data = await response.json();
         setOrder(data);
+
+        // Si el estado es 'approved', redirigir a la página de éxito
+        if (data.status === "approved") {
+          router.push(`/success?payment_id=${paymentId}&order_id=${orderId}`);
+          return;
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -31,8 +40,23 @@ export default function Pending() {
       }
     };
 
-    fetchOrderDetails();
-  }, [orderId]);
+    // Verificar inmediatamente
+    checkOrderStatus();
+
+    // Configurar el intervalo de verificación (cada 3 segundos)
+    const interval = setInterval(checkOrderStatus, 3000);
+
+    // Limpiar después de 5 minutos
+    const timeout = setTimeout(() => {
+      clearInterval(interval);
+    }, 300000); // 5 minutos
+
+    // Limpiar al desmontar
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeout);
+    };
+  }, [orderId, paymentId, router]);
 
   if (loading) {
     return (
@@ -43,34 +67,50 @@ export default function Pending() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 font-['Montserrat']">
+    <div className={`min-h-screen bg-gray-50 py-12 ${montserrat.className}`}>
       <div className="max-w-4xl mx-auto p-4">
         <div className="bg-white rounded-xl shadow-lg p-8">
           {/* Header Section */}
           <div className="text-center mb-10">
             <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <svg 
-                className="w-10 h-10 text-red-600" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="w-10 h-10 text-red-600"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
               Pago Pendiente
             </h1>
-            <p className="text-gray-600 text-lg font-['Roboto']">
+            <p className={`text-gray-600 text-lg ${roboto.className}`}>
               Tu orden ha sido registrada y está esperando confirmación de pago
             </p>
           </div>
 
+
+          {/* Agregar indicador de verificación */}
+          <div className="text-center mt-4">
+            <p className="text-sm text-gray-500">
+              Verificando el estado del pago
+              <span className="inline-block ml-2">
+                <span className="animate-bounce mx-0.5">.</span>
+                <span className="animate-bounce mx-0.5 animation-delay-200">
+                  .
+                </span>
+                <span className="animate-bounce mx-0.5 animation-delay-400">
+                  .
+                </span>
+              </span>
+            </p>
+          </div>
           {order && (
             <>
               {/* Order Details Section */}
@@ -78,23 +118,23 @@ export default function Pending() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm text-gray-500 font-['Roboto']">Número de orden</p>
+                      <p className={`text-gray-600 text-sm ${roboto.className}`}>Número de orden</p>
                       <p className="font-semibold text-gray-900">{order.id}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-['Roboto']">Total a pagar</p>
+                      <p className={`text-gray-600 text-sm ${roboto.className}`}>Total a pagar</p>
                       <p className="font-semibold text-gray-900">${Number(order.total).toFixed(2)}</p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <p className="text-sm text-gray-500 font-['Roboto']">Estado</p>
+                      <p className={`text-gray-600 text-sm ${roboto.className}`}>Estado</p>
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-50 text-red-600">
                         Pendiente
                       </span>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-500 font-['Roboto']">Método de pago</p>
+                      <p className={`text-gray-600 text-sm ${roboto.className}`}>Método de pago</p>
                       <p className="font-semibold text-gray-900 capitalize">{order.paymentMethod}</p>
                     </div>
                   </div>
@@ -107,7 +147,7 @@ export default function Pending() {
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">
                     Instrucciones de pago
                   </h3>
-                  <div className="space-y-4 font-['Roboto'] text-gray-700">
+                  <div className={`space-y-4 ${roboto.className} text-gray-700`}>
                     <div className="flex items-center">
                       <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">1</span>
                       <p className="ml-4">Dirígete a tu punto de pago más cercano</p>
@@ -138,14 +178,14 @@ export default function Pending() {
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <Link 
-              href="/dashboard" 
+            <Link
+              href="/dashboard"
               className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition-colors duration-200"
             >
               Ver mis órdenes
             </Link>
-            <Link 
-              href="/products" 
+            <Link
+              href="/products"
               className="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
             >
               Seguir comprando

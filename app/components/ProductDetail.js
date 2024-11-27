@@ -14,7 +14,9 @@ import {
   Truck,
   Shield,
   RefreshCw,
+  AlertCircle,
 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 const ProductDetail = ({ product }) => {
   const router = useRouter();
@@ -41,6 +43,17 @@ const ProductDetail = ({ product }) => {
 
   const handleAddToCart = async () => {
     try {
+      // Validación de stock
+      if (product.stock === 0) {
+        toast.error("Producto sin stock disponible");
+        return;
+      }
+
+      if (quantity > product.stock) {
+        toast.error(`Solo hay ${product.stock} unidades disponibles`);
+        return;
+      }
+
       setLoading(true);
       setError(null);
 
@@ -59,21 +72,22 @@ const ProductDetail = ({ product }) => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Redirigir al login si no está autenticado
           window.location.href = "/login";
+          return;
+        }
+        if (data.error === "Stock insuficiente") {
+          toast.error(`Solo hay ${data.availableStock} unidades disponibles`);
           return;
         }
         throw new Error(data.error || "Error al agregar al carrito");
       }
 
       setAddedToCart(true);
-      // Opcional: Actualizar el estado global del carrito si lo tienes
-
-      setTimeout(() => {
-        setAddedToCart(false);
-      }, 2000);
+      toast.success("¡Producto agregado al carrito!");
+      setTimeout(() => setAddedToCart(false), 2000);
     } catch (error) {
       console.error("Error:", error);
+      toast.error(error.message);
       setError(error.message);
     } finally {
       setLoading(false);
@@ -179,47 +193,113 @@ const ProductDetail = ({ product }) => {
                 </p>
               </div>
 
-              {/* Cantidad y Botón de Compra */}
-              <div className="flex gap-4 mb-8">
-                <div className="flex items-center border-2 border-gray-200 rounded-lg cursor-pointer">
-                  <button
-                    onClick={decrementQuantity}
-                    className="p-3 hover:text-red-600 transition-colors cursor-pointer"
-                    disabled={quantity <= 1}
-                  >
-                    <Minus className="w-5 h-5" />
-                  </button>
-                  <span className="w-12 text-center font-medium">
-                    {quantity}
-                  </span>
-                  <button
-                    onClick={incrementQuantity}
-                    className="p-3 hover:text-red-600 transition-colors"
-                    disabled={quantity >= (product.stock || 10)}
-                  >
-                    <Plus className="w-5 h-5" />
-                  </button>
+              <div className="mb-8">
+                {/* Indicador de Stock */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">
+                      Stock disponible
+                    </span>
+                    <span
+                      className={`text-sm font-medium ${
+                        product.stock === 0
+                          ? "text-red-600"
+                          : product.stock <= 5
+                          ? "text-orange-600"
+                          : "text-green-600"
+                      }`}
+                    >
+                      {product.stock === 0
+                        ? "Sin stock"
+                        : `${product.stock} unidad${
+                            product.stock !== 1 ? "es" : ""
+                          }`}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        product.stock === 0
+                          ? "bg-gray-400"
+                          : product.stock <= 5
+                          ? "bg-red-500"
+                          : product.stock <= 10
+                          ? "bg-yellow-500"
+                          : "bg-green-500"
+                      }`}
+                      style={{
+                        width: `${Math.min((product.stock / 100) * 100, 100)}%`,
+                      }}
+                    />
+                  </div>
                 </div>
-                <button
-                  onClick={handleAddToCart}
-                  disabled={loading}
-                  className="flex-1 flex items-center justify-center gap-2 rounded-lg font-medium bg-red-600 hover:bg-red-700 text-white transition-colors disabled:bg-gray-300"
-                >
-                  {loading ? (
-                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
-                  ) : addedToCart ? (
-                    <>
-                      <Check className="w-5 h-5" />
-                      Agregado al carrito
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag className="w-5 h-5" />
-                      Agregar al carrito
-                    </>
-                  )}
-                </button>
-               
+
+                {product.stock > 0 ? (
+                  <div className="flex gap-4">
+                    <div className="flex items-center border-2 border-gray-200 rounded-lg">
+                      <button
+                        onClick={decrementQuantity}
+                        className={`p-3 transition-colors ${
+                          quantity <= 1
+                            ? "text-gray-300 cursor-not-allowed"
+                            : "hover:text-red-600"
+                        }`}
+                        disabled={quantity <= 1}
+                      >
+                        <Minus className="w-5 h-5" />
+                      </button>
+                      <span className="w-12 text-center font-medium">
+                        {quantity}
+                      </span>
+                      <button
+                        onClick={incrementQuantity}
+                        className={`p-3 transition-colors ${
+                          quantity >= product.stock
+                            ? "text-gray-300 cursor-not-allowed"
+                            : "hover:text-red-600"
+                        }`}
+                        disabled={quantity >= product.stock}
+                      >
+                        <Plus className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <button
+                      onClick={handleAddToCart}
+                      disabled={loading || product.stock === 0}
+                      className={`flex-1 flex items-center justify-center gap-2 rounded-lg font-medium
+                ${
+                  loading || product.stock === 0
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : addedToCart
+                    ? "bg-green-600"
+                    : "bg-red-600 hover:bg-red-700"
+                } text-white transition-colors`}
+                    >
+                      {loading ? (
+                        <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent" />
+                      ) : addedToCart ? (
+                        <>
+                          <Check className="w-5 h-5" />
+                          Agregado al carrito
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingBag className="w-5 h-5" />
+                          Agregar al carrito
+                        </>
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center justify-center">
+                    <AlertCircle className="w-5 h-5 text-red-600 mr-2" />
+                    <span className="text-red-600 font-medium">
+                      Producto sin stock disponible
+                    </span>
+                  </div>
+                )}
+
+                {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
               </div>
 
               {/* Características Adicionales */}
