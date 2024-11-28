@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Checkout() {
   const { data: session } = useSession();
@@ -184,7 +185,7 @@ export default function Checkout() {
               >
                 <div className="flex items-center space-x-4">
                   {item.product.imageUrl && (
-                    <img
+                    <Image
                       src={item.product.imageUrl}
                       alt={item.product.name}
                       className="w-12 h-12 object-cover rounded"

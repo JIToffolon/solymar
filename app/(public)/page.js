@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState, useEffect,useCallback } from "react";
 import { Loader } from "lucide-react";
 import { cacheService } from "../utils/cache";
 import HeroSection from "../components/HeroSection";
@@ -15,7 +15,7 @@ export default function HomePage() {
   const [activeProductIndex, setActiveProductIndex] = useState(0);
   const PRODUCT_INTERVAL = 8000; // 8 segundos
 
-  const fetchFeaturedProducts = async () => {
+  const fetchFeaturedProducts = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -43,12 +43,12 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  };
+  },[]);
 
   // Efecto para cargar productos
   useEffect(() => {
     fetchFeaturedProducts();
-  }, []);
+  }, [fetchFeaturedProducts]);
 
   // Efecto para el carrusel automático
   useEffect(() => {

@@ -37,6 +37,8 @@ const FeaturesSection = React.memo(() => (
   </section>
 ));
 
+FeaturesSection.displayName = "FeaturesSection";
+
 const FeatureCard = React.memo(({ feature, index }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
@@ -53,4 +55,6 @@ const FeatureCard = React.memo(({ feature, index }) => (
     <p className="text-sm md:text-base text-gray-600">{feature.desc}</p>
   </motion.div>
 ));
+
+FeatureCard.displayName = "FeatureCard";
 export default FeaturesSection;

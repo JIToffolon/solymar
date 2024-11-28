@@ -1,14 +1,17 @@
 // components/CategoryNav.js
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowBigDownIcon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const CategoryNav = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -27,29 +30,39 @@ const CategoryNav = () => {
     fetchCategories();
   }, []);
 
+  const handleCategorySelect = (categoryId) => {
+    setIsMenuOpen(false);
+    const params = new URLSearchParams(searchParams);
+
+    if (categoryId) {
+      params.set("category", categoryId);
+      router.push(`/products?${params.toString()}`);
+    } else {
+      router.push("/products");
+    }
+  };
+
   if (loading) return null;
 
   return (
     <div className="absolute top-0 left-0 right-0 z-20 rounded-lg bg-gradient-to-b from-black/50 to-transparent">
       <div className="container mx-auto px-4">
-        {/* Versión Desktop */}
         <div className="hidden md:flex justify-center gap-4 py-4">
           {categories.map((category) => (
-            <Link
+            <button
               key={category.id}
-              href={`/products?category=${category.id}`}
+              onClick={() => handleCategorySelect(category.id)}
               className="px-4 py-2 text-white hover:text-red-400 transition-colors"
             >
               {category.name}
-            </Link>
+            </button>
           ))}
         </div>
 
-        {/* Versión Mobile/Tablet */}
         <div className="md:hidden">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="w-full flex items-center justify-start  pl-4 gap-2 py-4 text-white"
+            className="w-full flex items-center justify-start pl-4 gap-2 py-4 text-white"
           >
             {isMenuOpen ? (
               <X size={20} />
@@ -64,7 +77,6 @@ const CategoryNav = () => {
           <AnimatePresence>
             {isMenuOpen && (
               <>
-                {/* Overlay */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -73,7 +85,6 @@ const CategoryNav = () => {
                   className="fixed inset-0 bg-black/50 z-30"
                 />
 
-                {/* Menú desplegable */}
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
@@ -83,14 +94,13 @@ const CategoryNav = () => {
                 >
                   <div className="max-h-[60vh] overflow-y-auto">
                     {categories.map((category) => (
-                      <Link
+                      <button
                         key={category.id}
-                        href={`/products?category=${category.id}`}
-                        onClick={() => setIsMenuOpen(false)}
-                        className="block px-6 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-100 last:border-none"
+                        onClick={() => handleCategorySelect(category.id)}
+                        className="block w-full text-left px-6 py-3 text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors border-b border-gray-100 last:border-none"
                       >
                         {category.name}
-                      </Link>
+                      </button>
                     ))}
                   </div>
                 </motion.div>

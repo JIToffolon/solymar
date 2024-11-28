@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function Cart() {
   const { data: session } = useSession();
@@ -167,10 +168,12 @@ export default function Cart() {
               >
                 <div className="flex items-center space-x-3 sm:space-x-4 mb-3 sm:mb-0">
                   {item.product.imageUrl && (
-                    <img
+                    <Image
                       src={item.product.imageUrl}
                       alt={item.product.name}
-                      className="w-12 h-12 sm:w-16 sm:h-16 object-cover rounded-lg"
+                      className="w-12 h-12 sm:w-16 sm:h-16 object-contain rounded-lg"
+                      width={400}
+                      height={400}
                     />
                   )}
                   <div>

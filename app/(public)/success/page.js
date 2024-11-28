@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Success() {
   const searchParams = useSearchParams();
@@ -107,7 +108,7 @@ export default function Success() {
                   <div key={item.id} className="flex justify-between items-center">
                     <div className="flex items-center space-x-4">
                       {item.product.imageUrl && (
-                        <img 
+                        <Image 
                           src={item.product.imageUrl} 
                           alt={item.product.name}
                           className="w-12 h-12 object-cover rounded"

@@ -20,7 +20,7 @@ export default function Products() {
     if(categoryParam){
       setSelectedCategory(categoryParam)
     }
-  }, [searchParams]);
+  }, [searchParams,categoryParam]);
 
   const handleCategorySelect = (categoryId) => {
     console.log("Selected category:", categoryId);
@@ -58,7 +58,7 @@ export default function Products() {
 
         {/* Contenido principal */}
         <div className="flex-1">
-          <ProductFilters onSearch={handleSearch} onSort={handleSort} />
+          <ProductFilters onSearch={handleSearch} onSort={handleSort} onCategorySelect={handleCategorySelect} />
 
           <ProductList
             selectedCategory={selectedCategory}

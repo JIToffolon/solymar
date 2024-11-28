@@ -1,7 +1,8 @@
 // components/CategorySidebar.js
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useCallback } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 export default function CategorySidebar({ onCategorySelect, initialSelected }) {
   const [categories, setCategories] = useState([]);
@@ -9,6 +10,32 @@ export default function CategorySidebar({ onCategorySelect, initialSelected }) {
   const [selectedCategory, setSelectedCategory] = useState(initialSelected);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const handleCategorySelect = useCallback(
+    (categoryId, type) => {
+      setSelectedCategory(categoryId);
+      if (categoryId) {
+        // Actualizar la URL
+        const params = new URLSearchParams(searchParams);
+        params.set("category", categoryId);
+        router.push(`/products?${params.toString()}`);
+      } else {
+        // Si se selecciona "Todas las categorías"
+        router.push("/products");
+      }
+
+      if (type === "main") {
+        setExpandedCategory(categoryId);
+      }
+
+      if (onCategorySelect) {
+        onCategorySelect(categoryId, type);
+      }
+    },
+    [router, searchParams, onCategorySelect]
+  );
 
   const getTotalProducts = (category) => {
     // Contar productos directos
@@ -33,14 +60,14 @@ export default function CategorySidebar({ onCategorySelect, initialSelected }) {
         setCategories(data);
 
         // Obtener el parámetro de categoría de la URL
-        const params = new URLSearchParams(window.location.search);
-        const categoryId = params.get("category");
+        const categoryId = searchParams.get("category");
 
         if (categoryId) {
-          // Si hay una categoría en la URL, seleccionarla y expandirla
           setSelectedCategory(categoryId);
           setExpandedCategory(categoryId);
-          onCategorySelect(categoryId); // Notificar al componente padre
+          if (onCategorySelect) {
+            onCategorySelect(categoryId);
+          }
         }
       } catch (err) {
         setError(err.message);
@@ -50,7 +77,7 @@ export default function CategorySidebar({ onCategorySelect, initialSelected }) {
     };
 
     fetchCategories();
-  }, [onCategorySelect]); // Agregar onCategorySelect como dependencia
+  }, [searchParams, onCategorySelect]);
 
   if (loading) {
     return (
@@ -74,9 +101,7 @@ export default function CategorySidebar({ onCategorySelect, initialSelected }) {
       <nav className="space-y-2">
         <button
           onClick={() => {
-            setSelectedCategory(null);
-            setExpandedCategory(null);
-            onCategorySelect(null);
+            handleCategorySelect(null)
           }}
           className={`w-full flex items-center justify-between p-2 text-left rounded-lg transition-colors ${
             !selectedCategory ? "bg-red-50 text-red-600" : "hover:bg-gray-50"

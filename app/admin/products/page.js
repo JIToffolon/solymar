@@ -1,8 +1,9 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Plus, Edit2, Trash2, X } from "lucide-react";
 import { montserrat, roboto } from "@/app/ui/fonts";
 import Pagination from "@/app/components/Pagination";
+import Image from "next/image";
 
 const AdminProducts = () => {
   const [products, setProducts] = useState([]);
@@ -25,19 +26,25 @@ const AdminProducts = () => {
     imageUrl: "",
   });
 
-  const limit = 9;
+  const limit = 10;
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
   }, [currentPage]);
 
-  const fetchProducts = async () => {
-    const res = await fetch(`/api/admin/products?page=${currentPage}&limit=${limit}`);
+  const fetchProducts = useCallback(async () => {
+    const res = await fetch(
+      `/api/admin/products?page=${currentPage}&limit=${limit}`
+    );
     const data = await res.json();
     setProducts(data.products);
-    setTotalPages(data.totalPages)
-  };
+    setTotalPages(data.totalPages);
+  },[]);
+
+  useEffect(()=>{
+    fetchProducts();
+  },[fetchProducts]);
 
   const fetchCategories = async () => {
     try {
@@ -221,10 +228,12 @@ const AdminProducts = () => {
                   <td className="px-6 py-4">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0">
-                        <img
+                        <Image
                           className="h-10 w-10 rounded-md object-cover"
                           src={product.imageUrl || "/placeholder.png"}
                           alt=""
+                          width={100}
+                          height={100}
                         />
                       </div>
                       <div className="ml-4">

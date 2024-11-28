@@ -32,6 +32,8 @@ const NavigationSection = React.memo(() => {
     []
   );
 
+  NavigationSection.displayName = "NavigationSection";
+
   return (
     <section className="py-12 md:py-16 lg:py-24 relative -mt-8 md:-mt-12 lg:-mt-20">
       <div className="container mx-auto px-4">
@@ -61,6 +63,7 @@ const NavigationCard = React.memo(({ card, index }) => (
     </Link>
   </motion.div>
 ));
+NavigationCard.displayName = "NavigationCard";
 
 const CardContent = React.memo(({ card }) => (
   <div className="relative h-full p-6 md:p-8 flex flex-col items-center justify-center text-white">
@@ -80,6 +83,7 @@ const CardContent = React.memo(({ card }) => (
     </motion.button>
   </div>
 ));
+CardContent.displayName = "CardContent";
 
 const CardOverlays = React.memo(() => (
   <>
@@ -87,5 +91,7 @@ const CardOverlays = React.memo(() => (
     <div className="absolute inset-0 opacity-20 bg-pattern mix-blend-soft-light" />
   </>
 ));
+
+CardOverlays.displayName = "CardOverlays";
 
 export default NavigationSection;

@@ -1,62 +1,122 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useParams } from "next/navigation";
 import { roboto } from "../ui/fonts";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+// const OrderDetailsClient = () => {
+//   const [order, setOrder] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const orderId = useParams();
+//   const router = useRouter();
+// useEffect(() => {
+//   const fetchOrder = async () => {
+//     if (!orderId) {
+//       console.log("No hay orderId"); // Debugging
+//       return;
+//     }
+
+//     try {
+//       setLoading(true);
+//       console.log("Fetching order with ID:", orderId.id); // Debugging
+
+//       const res = await fetch(`/api/admin/orders/${orderId.id}`);
+//       console.log("Response status:", res.status); // Debugging
+
+//       if (!res.ok) throw new Error("Error al cargar la orden");
+//       const data = await res.json();
+
+//       console.log("Datos recibidos:", data); // Debugging
+//       setOrder(data);
+//     } catch (error) {
+//       console.error("Error:", error);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   fetchOrder();
+// }, [orderId]);
+
+// const handleStatusChange = async (newStatus) => {
+//   try {
+//     const res = await fetch(`/api/admin/orders/${orderId.id}`, {
+//       method: "PUT",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({ status: newStatus }),
+//     });
+
+//     if (!res.ok) throw new Error("Error al actualizar estado");
+
+//     const updatedOrder = await res.json();
+//     setOrder(updatedOrder);
+//   } catch (error) {
+//     console.error("Error:", error);
+//   }
+// };
 
 const OrderDetailsClient = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const orderId = useParams();
   const router = useRouter();
-  useEffect(() => {
-    const fetchOrder = async () => {
-      if (!orderId) {
-        console.log("No hay orderId"); // Debugging
-        return;
-      }
 
-      try {
-        setLoading(true);
-        console.log("Fetching order with ID:", orderId.id); // Debugging
+  const fetchOrder = useCallback(async (id) => {
+    if (!id) {
+      console.log("No hay orderId");
+      return;
+    }
 
-        const res = await fetch(`/api/admin/orders/${orderId.id}`);
-        console.log("Response status:", res.status); // Debugging
-
-        if (!res.ok) throw new Error("Error al cargar la orden");
-        const data = await res.json();
-
-        console.log("Datos recibidos:", data); // Debugging
-        setOrder(data);
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchOrder();
-  }, [orderId]);
-
-  const handleStatusChange = async (newStatus) => {
     try {
-      const res = await fetch(`/api/admin/orders/${orderId.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
+      setLoading(true);
+      console.log("Fetching order with ID:", id);
 
-      if (!res.ok) throw new Error("Error al actualizar estado");
+      const res = await fetch(`/api/admin/orders/${id}`);
+      console.log("Response status:", res.status);
 
-      const updatedOrder = await res.json();
-      setOrder(updatedOrder);
+      if (!res.ok) throw new Error("Error al cargar la orden");
+      const data = await res.json();
+
+      console.log("Datos recibidos:", data);
+      setOrder(data);
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
+
+  const handleStatusChange = useCallback(
+    async (newStatus) => {
+      try {
+        const res = await fetch(`/api/admin/orders/${orderId.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (!res.ok) throw new Error("Error al actualizar estado");
+
+        const updatedOrder = await res.json();
+        setOrder(updatedOrder);
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
+    [orderId]
+  );
+
+  useEffect(() => {
+    if (orderId?.id) {
+      fetchOrder(orderId.id);
+    }
+  }, [orderId, fetchOrder]);
 
   if (loading) {
     return (
@@ -146,10 +206,12 @@ const OrderDetailsClient = () => {
                   className="flex items-center justify-between"
                 >
                   <div className="flex items-center">
-                    <img
+                    <Image
                       src={item.product.imageUrl || "/placeholder.png"}
                       alt={item.product.name}
                       className="w-16 h-16 object-cover rounded"
+                      width={300}
+                      height={300}
                     />
                     <div className="ml-4">
                       <p className="font-medium">{item.product.name}</p>

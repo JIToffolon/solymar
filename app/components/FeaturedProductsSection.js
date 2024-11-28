@@ -24,6 +24,7 @@ const ProductInfo = React.memo(({ product }) => (
     </div>
   </div>
 ));
+ProductInfo.displayName = 'ProductInfo';
 
 const ProductCard = React.memo(({ product, isFirst = false }) => (
   <motion.div
@@ -50,6 +51,7 @@ const ProductCard = React.memo(({ product, isFirst = false }) => (
     </div>
   </motion.div>
 ));
+ProductCard.displayName = 'ProductCard';
 
 const ProductOverlay = React.memo(({ product }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -92,6 +94,8 @@ const ProductOverlay = React.memo(({ product }) => {
       setIsLoading(false);
     }
   };
+
+  ProductOverlay.displayName = 'ProductOverlay';
 
   return (
     <>
@@ -149,5 +153,6 @@ const FeaturedProductsSection = ({ products }) => {
     </section>
   );
 };
+FeaturedProductsSection.displayName = 'FeaturedProductsSection';
 
 export default FeaturedProductsSection;

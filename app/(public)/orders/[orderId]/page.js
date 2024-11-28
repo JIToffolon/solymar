@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback } from "react";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import Image from "next/image";
 
 export default function OrderDetails() {
   const { orderId } = useParams();
@@ -222,14 +223,16 @@ export default function OrderDetails() {
               {order.items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+                  className="flex flex-col lg:flex-row items-center justify-between p-4 bg-gray-50 rounded-lg"
                 >
                   <div className="flex items-center space-x-4">
                     {item.product.imageUrl && (
-                      <img
+                      <Image
                         src={item.product.imageUrl}
                         alt={item.product.name}
-                        className="w-16 h-16 object-cover rounded-lg"
+                        className="w-16 h-16 object-contain rounded-lg"
+                        width={300}
+                        height={300}
                       />
                     )}
                     <div>

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Plus,
   Edit2,
@@ -21,18 +21,18 @@ const AdminCategories = () => {
   const [totalPages, setTotalPages] = useState(0);
   const limit = 10;
 
-  useEffect(() => {
-    fetchCategories();
-  }, [currentPage]);
-
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     const res = await fetch(
       `/api/admin/categories?page=${currentPage}&limit=${limit}`
     );
     const data = await res.json();
     setCategories(data.categories);
     setTotalPages(data.totalPages);
-  };
+  },[]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories , currentPage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

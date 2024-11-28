@@ -8,6 +8,7 @@ import Link from "next/link";
 import AddToCartButton2 from "./addToCartButton2";
 import AddedToCartNotification from "./AddedToCartNotification";
 import CategoryNav from "./CategoryNav";
+import { Loader } from "lucide-react";
 
 const ProductInfo = React.memo(({ product }) => {
   const [isLoading, setIsLoading] = useState(false);

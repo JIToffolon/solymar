@@ -17,6 +17,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 const ProductDetail = ({ product }) => {
   const router = useRouter();
@@ -149,7 +150,7 @@ const ProductDetail = ({ product }) => {
                     }`}
                     onClick={() => setSelectedImage(index)}
                   >
-                    <img
+                    <Image
                       src={image}
                       alt={`Vista ${index + 1}`}
                       className="w-full h-full object-cover"
@@ -329,7 +330,7 @@ const ProductDetail = ({ product }) => {
             className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
             onClick={() => setShowZoom(false)}
           >
-            <img
+            <Image
               src={productImages[selectedImage]}
               alt={product.name}
               className="max-w-[90vw] max-h-[90vh] object-contain"

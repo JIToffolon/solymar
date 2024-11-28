@@ -2,6 +2,7 @@ import AddToCartButton from "./addToCartButton";
 import { useState } from "react";
 import Link from "next/link";
 import { Minus, Plus } from "lucide-react";
+import Image from "next/image";
 
 export default function ProductCard({ product }) {
   const [isHovered, setIsHovered] = useState(false);
@@ -29,9 +30,11 @@ export default function ProductCard({ product }) {
         <div className="relative h-[200px] sm:h-[250px] md:h-[300px]">
           <div className="absolute inset-0 bg-gray-100">
             {product.imageUrl ? (
-              <img
+              <Image
                 src={product.imageUrl}
                 alt={product.name}
+                width={500}
+                height={500}
                 className="w-full h-full object-contain"
               />
             ) : (

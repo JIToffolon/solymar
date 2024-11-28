@@ -15,9 +15,15 @@ const ProductList = ({ selectedCategory, searchQuery, sortBy, priceRange }) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        setCurrentPage(1); // Resetear la página al cambiar los filtros
 
         const params = new URLSearchParams();
-        if (selectedCategory) params.set("categoryId", selectedCategory);
+        // Modificar cómo enviamos el categoryId
+        if (selectedCategory) {
+          params.set("categoryId", selectedCategory);
+          // Agregar un parámetro para indicar si debemos incluir subcategorías
+          params.set("includeSubcategories", "true");
+        }
         if (searchQuery) params.set("search", searchQuery);
         if (sortBy && sortBy !== "default") params.set("sort", sortBy);
         params.set("page", currentPage);
@@ -53,6 +59,11 @@ const ProductList = ({ selectedCategory, searchQuery, sortBy, priceRange }) => {
 
     fetchProducts();
   }, [selectedCategory, searchQuery, sortBy, priceRange, currentPage]);
+
+  // Reset currentPage when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery, sortBy, priceRange]);
 
   if (loading) {
     return (
