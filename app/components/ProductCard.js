@@ -26,7 +26,7 @@ export default function ProductCard({ product }) {
     >
       {/* Contenedor de imagen con tamaño fijo */}
       <Link href={`/products/${product.id}`}>
-        <div className="relative w-full h-[300px]">
+        <div className="relative h-[200px] sm:h-[250px] md:h-[300px]">
           <div className="absolute inset-0 bg-gray-100">
             {product.imageUrl ? (
               <img
@@ -37,7 +37,7 @@ export default function ProductCard({ product }) {
             ) : (
               <div className="w-full h-full flex items-center justify-center">
                 <svg
-                  className="w-16 h-16 text-gray-400"
+                  className="w-12 h-12 md:w-16 md:h-16 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -63,27 +63,27 @@ export default function ProductCard({ product }) {
           />
         </div>
       </Link>
-      <span className="text-sm text-gray-700 text-center font-semibold">
+      <span className="text-sm md:text-base text-gray-700 text-center font-semibold mt-2">
               {product.name}
       </span>
 
       {/* Precio y controles */}
-      <div className="pt-4 border-t border-gray-100 mt-4 flex flex-col items-center">
-        <div className="flex items-center justify-between mb-4  gap-3">
+      <div className="pt-3 md:pt-4 border-t border-gray-100 mt-3 md:mt-4">
+        <div className="flex items-center justify-between mb-3 md:mb-4 gap-2 md:gap-3">
           <div className="flex flex-col ">
             {product.originalPrice && (
-              <span className="text-xs text-gray-500 line-through">
+              <span className="text-xs md:text-sm text-gray-500 line-through">
                 ${Number(product.originalPrice).toFixed(2)}
               </span>
             )}
-            <span className="text-xl font-bold text-red-600">
+            <span className="text-lg md:text-xl font-bold text-red-600">
               ${Number(product.price).toFixed(2)}
             </span>
           </div>
 
           {/* Controles de cantidad */}
           {product.stock > 0 && (
-            <div className="flex items-center space-x-2 text-gray-700">
+            <div className="flex items-center space-x-1 md:space-x-2 text-gray-700">
               <button
                 onClick={handleDecrement}
                 disabled={quantity === 1}

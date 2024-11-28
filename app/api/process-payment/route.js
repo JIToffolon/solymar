@@ -72,7 +72,7 @@ export async function POST(request) {
           id: item.product.id,
           title: item.product.name,
           description: item.product.description || item.product.name,
-          category_id: "electronics",
+          category_id: item.product.categoryId,
           quantity: item.quantity,
           unit_price: Number(item.product.price)
         }))

@@ -75,9 +75,10 @@ export default function HomePage() {
   if (error && !featuredProducts.length) return <div>Error: {error}</div>;
 
   return (
-    <>
-      <div className="min-h-screen font-['Montserrat'] container mx-auto px-0 max-w-[100%]">
-        <Suspense fallback={<Loader />}>
+    <div className="flex flex-col min-h-screen">
+      <Suspense fallback={<Loader />}>
+        {/* Hero Section - Full width */}
+        <section className="w-full">
           <HeroSection
             featuredProducts={featuredProducts}
             activeIndex={activeProductIndex}
@@ -87,11 +88,29 @@ export default function HomePage() {
             error={error}
             onRetry={fetchFeaturedProducts}
           />
-          <FeaturesSection />
-          <FeaturedProductsSection products={featuredProducts} />
-          <NavigationSection />
-        </Suspense>
-      </div>
-    </>
+        </section>
+
+        {/* Features Section - Contenido centrado */}
+        <section className="w-full px-4 md:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <FeaturesSection />
+          </div>
+        </section>
+
+        {/* Featured Products Section - Contenido centrado */}
+        <section className="w-full px-4 md:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <FeaturedProductsSection products={featuredProducts} />
+          </div>
+        </section>
+
+        {/* Navigation Section - Contenido centrado */}
+        <section className="w-full px-4 md:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <NavigationSection />
+          </div>
+        </section>
+      </Suspense>
+    </div>
   );
 }

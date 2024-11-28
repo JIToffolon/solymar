@@ -16,31 +16,27 @@ export default function Pending() {
 
   useEffect(() => {
     const checkOrderStatus = async () => {
-      if (!orderId) {
-        setLoading(false);
-        return;
-      }
-
       try {
         const response = await fetch(`/api/orders/${orderId}`);
-        if (!response.ok)
-          throw new Error("Error al obtener los detalles de la orden");
         const data = await response.json();
         setOrder(data);
 
-        // Si el estado es 'approved', redirigir a la página de éxito
-        if (data.status === "approved") {
-          router.push(`/success?payment_id=${paymentId}&order_id=${orderId}`);
-          return;
+        // Si la orden está pendiente, seguir verificando
+        if (data.status === "pending") {
+          setTimeout(checkOrderStatus, 3000); // Verificar cada 3 segundos
+        } else {
+          // Si el estado cambió a approved, redirigir a success
+          if (data.status === "approved") {
+            window.location.href = `/success?order_id=${orderId}&payment_id=${data.paymentId}`;
+          }
         }
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
+        console.error("Error checking order status:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    // Verificar inmediatamente
     checkOrderStatus();
 
     // Configurar el intervalo de verificación (cada 3 segundos)
@@ -95,7 +91,6 @@ export default function Pending() {
             </p>
           </div>
 
-
           {/* Agregar indicador de verificación */}
           <div className="text-center mt-4">
             <p className="text-sm text-gray-500">
@@ -118,53 +113,91 @@ export default function Pending() {
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-4">
                     <div>
-                      <p className={`text-gray-600 text-sm ${roboto.className}`}>Número de orden</p>
+                      <p
+                        className={`text-gray-600 text-sm ${roboto.className}`}
+                      >
+                        Número de orden
+                      </p>
                       <p className="font-semibold text-gray-900">{order.id}</p>
                     </div>
                     <div>
-                      <p className={`text-gray-600 text-sm ${roboto.className}`}>Total a pagar</p>
-                      <p className="font-semibold text-gray-900">${Number(order.total).toFixed(2)}</p>
+                      <p
+                        className={`text-gray-600 text-sm ${roboto.className}`}
+                      >
+                        Total a pagar
+                      </p>
+                      <p className="font-semibold text-gray-900">
+                        ${Number(order.total).toFixed(2)}
+                      </p>
                     </div>
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <p className={`text-gray-600 text-sm ${roboto.className}`}>Estado</p>
+                      <p
+                        className={`text-gray-600 text-sm ${roboto.className}`}
+                      >
+                        Estado
+                      </p>
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-50 text-red-600">
                         Pendiente
                       </span>
                     </div>
                     <div>
-                      <p className={`text-gray-600 text-sm ${roboto.className}`}>Método de pago</p>
-                      <p className="font-semibold text-gray-900 capitalize">{order.paymentMethod}</p>
+                      <p
+                        className={`text-gray-600 text-sm ${roboto.className}`}
+                      >
+                        Método de pago
+                      </p>
+                      <p className="font-semibold text-gray-900 capitalize">
+                        {order.paymentMethod}
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
 
               {/* Payment Instructions */}
-              {(order.paymentMethod === 'ticket'||order.paymentMethod === 'pagofacil'||order.paymentMethod === 'rapipago') && (
+              {(order.paymentMethod === "ticket" ||
+                order.paymentMethod === "pagofacil" ||
+                order.paymentMethod === "rapipago") && (
                 <div className="bg-red-50 rounded-xl p-6 mb-8">
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">
                     Instrucciones de pago
                   </h3>
-                  <div className={`space-y-4 ${roboto.className} text-gray-700`}>
+                  <div
+                    className={`space-y-4 ${roboto.className} text-gray-700`}
+                  >
                     <div className="flex items-center">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">1</span>
-                      <p className="ml-4">Dirígete a tu punto de pago más cercano</p>
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">
+                        1
+                      </span>
+                      <p className="ml-4">
+                        Dirígete a tu punto de pago más cercano
+                      </p>
                     </div>
                     <div className="flex items-center">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">2</span>
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">
+                        2
+                      </span>
                       <div className="ml-4">
                         <p>Muestra este código:</p>
-                        <code className="mt-2 block bg-white px-4 py-2 rounded-lg font-mono text-red-600">{paymentId}</code>
+                        <code className="mt-2 block bg-white px-4 py-2 rounded-lg font-mono text-red-600">
+                          {paymentId}
+                        </code>
                       </div>
                     </div>
                     <div className="flex items-center">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">3</span>
-                      <p className="ml-4">Realiza el pago por el monto exacto</p>
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">
+                        3
+                      </span>
+                      <p className="ml-4">
+                        Realiza el pago por el monto exacto
+                      </p>
                     </div>
                     <div className="flex items-center">
-                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">4</span>
+                      <span className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-semibold">
+                        4
+                      </span>
                       <p className="ml-4">Guarda tu comprobante de pago</p>
                     </div>
                   </div>

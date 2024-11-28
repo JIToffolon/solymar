@@ -6,17 +6,11 @@ import WhatsAppButton from "../components/WhatsAppButton";
 
 export default function PublicLayout({ children }) {
   return (
-    
-      <div className={`${montserrat.className} antialiased bg-white `}>
-        
-          <div className="estructura">
-            <Navbar2 />
-            <main className="max-w-[100%] mx-auto px-4 py-8">{children}</main>
-            <WhatsAppButton />
-            <Footer />
-          </div>
-       
-      </div>
-    
+    <div className={`${montserrat.className} antialiased bg-white min-h-screen flex flex-col`}>
+      <Navbar2 />
+      <main className="flex-grow">{children}</main>
+      <WhatsAppButton />
+      <Footer />
+    </div>
   );
 }

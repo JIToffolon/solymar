@@ -1,51 +1,6 @@
 import prisma from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
 
-// export async function GET(request) {
-//   try {
-//     const { searchParams } = new URL(request.url);
-//     const categoryId = searchParams.get('categoryId');
-//     const search = searchParams.get('search');
-//     const sort = searchParams.get('sort');
-
-//     let where = { active: true };
-
-//     if (categoryId) {
-//       where.OR = [
-//         { categoryId },
-//         { category: { parentId: categoryId } }
-//       ];
-//     }
-
-//     if (search) {
-//       where.OR = [
-//         { name: { contains: search } },
-//         { description: { contains: search } }
-//       ];
-//     }
-
-//     const products = await prisma.product.findMany({
-//       where,
-//       orderBy: sort === 'price-asc' ? { price: 'asc' } :
-//                sort === 'price-desc' ? { price: 'desc' } :
-//                sort === 'name-asc' ? { name: 'asc' } :
-//                sort === 'stock-desc' ? { stock: 'desc' } :
-//                { createdAt: 'desc' },
-//       include: {
-//         category: true
-//       }
-//     });
-
-//     return NextResponse.json(products);
-//   } catch (error) {
-//     console.error('Error fetching products:', error);
-//     return NextResponse.json(
-//       { error: "Error al obtener productos" }, 
-//       { status: 500 }
-//     );
-//   }
-// }
-
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);

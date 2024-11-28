@@ -3,12 +3,13 @@ import { useState, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useParams } from "next/navigation";
 import { roboto } from "../ui/fonts";
+import { useRouter } from "next/navigation";
 
 const OrderDetailsClient = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const orderId = useParams();
-
+  const router = useRouter();
   useEffect(() => {
     const fetchOrder = async () => {
       if (!orderId) {
@@ -188,9 +189,7 @@ const OrderDetailsClient = () => {
                   {order.paymentId || "No disponible"}
                 </p>
                 <p className="text-gray-600">Cuotas</p>
-                <p className="font-medium">
-                  {order.installments}
-                </p>
+                <p className="font-medium">{order.installments}</p>
               </div>
             </div>
           </div>

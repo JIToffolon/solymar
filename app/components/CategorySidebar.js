@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
-export default function CategorySidebar({ onCategorySelect }) {
+export default function CategorySidebar({ onCategorySelect, initialSelected }) {
   const [categories, setCategories] = useState([]);
   const [expandedCategory, setExpandedCategory] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(initialSelected);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -31,6 +31,17 @@ export default function CategorySidebar({ onCategorySelect }) {
         if (!response.ok) throw new Error("Error al cargar categorías");
         const data = await response.json();
         setCategories(data);
+
+        // Obtener el parámetro de categoría de la URL
+        const params = new URLSearchParams(window.location.search);
+        const categoryId = params.get("category");
+
+        if (categoryId) {
+          // Si hay una categoría en la URL, seleccionarla y expandirla
+          setSelectedCategory(categoryId);
+          setExpandedCategory(categoryId);
+          onCategorySelect(categoryId); // Notificar al componente padre
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -39,7 +50,7 @@ export default function CategorySidebar({ onCategorySelect }) {
     };
 
     fetchCategories();
-  }, []);
+  }, [onCategorySelect]); // Agregar onCategorySelect como dependencia
 
   if (loading) {
     return (

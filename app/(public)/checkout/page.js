@@ -15,7 +15,7 @@ export default function Checkout() {
 
   useEffect(() => {
     if (!session) return;
-    
+
     const initializeCheckout = async () => {
       try {
         setIsLoading(true);
@@ -23,14 +23,14 @@ export default function Checkout() {
 
         // 1. Inicializar MP
         initMercadoPago(process.env.NEXT_PUBLIC_MP_PUBLIC_KEY, {
-          locale: 'es-AR'
+          locale: "es-AR",
         });
 
         // 2. Obtener datos del carrito
         const cartResponse = await fetch("/api/cart");
         if (!cartResponse.ok) throw new Error("Error al obtener el carrito");
         const cartData = await cartResponse.json();
-        
+
         if (!cartData.items || cartData.items.length === 0) {
           router.push("/cart");
           return;
@@ -45,15 +45,15 @@ export default function Checkout() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            items: cartData.items.map(item => ({
+            items: cartData.items.map((item) => ({
               id: item.product.id,
               title: item.product.name,
               description: item.product.description || item.product.name,
               quantity: item.quantity,
               currency_id: "ARS",
-              unit_price: Number(item.product.price)
-            }))
-          })
+              unit_price: Number(item.product.price),
+            })),
+          }),
         });
 
         if (!preferenceResponse.ok) {
@@ -62,7 +62,6 @@ export default function Checkout() {
 
         const { id: prefId } = await preferenceResponse.json();
         setPreferenceId(prefId);
-
       } catch (err) {
         console.error("Initialization error:", err);
         setError(err.message || "Error al inicializar el checkout");
@@ -86,32 +85,39 @@ export default function Checkout() {
           payment_method: selectedPaymentMethod,
           formData: {
             ...formData,
-            transaction_amount: total // Asegurarnos de enviar el monto total
+            transaction_amount: total, // Asegurarnos de enviar el monto total
           },
-          preferenceId
+          preferenceId,
         }),
       });
-  
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || "Error al procesar el pago");
       }
-  
+
       switch (data.status) {
         case "approved":
-          router.push(`/success?payment_id=${data.id}&order_id=${data.order_id}`);
+          router.push(
+            `/success?payment_id=${data.id}&order_id=${data.order_id}`
+          );
           break;
         case "pending":
-          router.push(`/pending?payment_id=${data.id}&order_id=${data.order_id}`);
+          router.push(
+            `/pending?payment_id=${data.id}&order_id=${data.order_id}`
+          );
           break;
         case "rejected":
-          router.push(`/failure?payment_id=${data.id}&order_id=${data.order_id}`);
+          router.push(
+            `/failure?payment_id=${data.id}&order_id=${data.order_id}`
+          );
           break;
         default:
-          router.push(`/pending?payment_id=${data.id}&order_id=${data.order_id}`);
+          router.push(
+            `/pending?payment_id=${data.id}&order_id=${data.order_id}`
+          );
       }
-  
     } catch (error) {
       console.error("Payment error:", error);
       setError(error.message || "Error al procesar el pago");
@@ -218,14 +224,16 @@ export default function Checkout() {
         <Payment
           initialization={{
             amount: total,
-            preferenceId: preferenceId
+            preferenceId: preferenceId,
           }}
           customization={{
             paymentMethods: {
               creditCard: "all",
               debitCard: "all",
-              mercadoPago: "all",
-              ticket: "all",
+              minInstallments: 1,
+              maxInstallments: 6,
+              // mercadoPago: "all",
+              // ticket: "all",
             },
             visual: {
               style: {
