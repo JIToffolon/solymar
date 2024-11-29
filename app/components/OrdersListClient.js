@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import Pagination from "./Pagination";
@@ -17,11 +17,7 @@ const OrdersListClient = () => {
   const [totalPages, setTotalPages] = useState(0);
   const limit = 10;
 
-  useEffect(() => {
-    fetchOrders();
-  }, [currentPage]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       setLoading(true);
       const res = await fetch(
@@ -36,7 +32,11 @@ const OrdersListClient = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [currentPage, fetchOrders]);
 
   const filteredOrders =
     orders?.filter((order) => {

@@ -28,7 +28,7 @@ const AdminCategories = () => {
     const data = await res.json();
     setCategories(data.categories);
     setTotalPages(data.totalPages);
-  },[]);
+  },[currentPage]);
 
   useEffect(() => {
     fetchCategories();

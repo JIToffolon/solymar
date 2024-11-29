@@ -77,6 +77,9 @@ const ProductInfo = React.memo(({ product }) => {
     </>
   );
 });
+
+ProductInfo.displayName='ProductInfo';
+
 const HeroContent = React.memo(() => (
   <div className="w-full lg:col-span-5">
     <motion.div
@@ -101,6 +104,8 @@ const HeroContent = React.memo(() => (
     </motion.div>
   </div>
 ));
+
+HeroContent.displayName='HeroContent';
 
 const ProductCarousel = React.memo(
   ({ products, activeIndex, onNext, onPrev }) => (
@@ -128,6 +133,8 @@ const ProductCarousel = React.memo(
     </div>
   )
 );
+
+ProductCarousel.displayName='ProductCarousel';
 
 const CarouselItem = React.memo(({ product }) => (
   <motion.div
@@ -159,6 +166,8 @@ const CarouselItem = React.memo(({ product }) => (
     </Link>
   </motion.div>
 ));
+
+CarouselItem.displayName='CarouselItem';
 
 const CarouselControls = ({ length, activeIndex, onNext, onPrev }) => (
   <div className="absolute -bottom-12 md:-bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-4 md:gap-6">

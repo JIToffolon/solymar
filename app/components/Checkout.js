@@ -59,7 +59,7 @@ export default function Checkout() {
     };
 
     fetchCartAndCreatePreference();
-  }, [session]);
+  }, [session,router]);
 
   const initialization = {
     amount: orderAmount,
