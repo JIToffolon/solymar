@@ -169,7 +169,7 @@ export async function POST(request) {
       });
 
       if (!order) {
-        console.error(`❌ Orden no encontrada para el pago ${body.data.id}`);
+        console.error(` Orden no encontrada para el pago ${body.data.id}`);
         return NextResponse.json(
           { error: "Orden no encontrada" },
           { status: 404 }
@@ -206,7 +206,7 @@ export async function POST(request) {
 
           // Si el pago está aprobado, procesar stock
           if (paymentInfo.status === "approved") {
-            console.log("✅ Procesando stock para orden aprobada");
+            console.log(" Procesando stock para orden aprobada");
 
             for (const item of order.items) {
               const newStock = item.product.stock - item.quantity;
@@ -245,15 +245,15 @@ export async function POST(request) {
           status: paymentInfo.status,
         });
       } catch (txError) {
-        console.error("❌ Error en la transacción:", txError);
+        console.error(" Error en la transacción:", txError);
         throw txError;
       }
     } catch (paymentError) {
-      console.error("❌ Error obteniendo información del pago:", paymentError);
+      console.error(" Error obteniendo información del pago:", paymentError);
       throw paymentError;
     }
   } catch (error) {
-    console.error("❌ Error general:", error);
+    console.error("Error general:", error);
     return NextResponse.json(
       {
         error: "Error procesando la notificación",
