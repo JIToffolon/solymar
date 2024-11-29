@@ -7,137 +7,145 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String    @id @default(cuid())
-  email     String    @unique
-  password  String
-  name      String?
-  role      Role      @default(USER)
-  cart      Cart?
-  orders    Orders[]
-  createdAt DateTime  @default(now()) 
-  updatedAt DateTime  @updatedAt
+model cart {
+  id        String     @id
+  createdAt DateTime   @default(now())
+  updatedAt DateTime
+  userId    String     @unique(map: "Cart_userId_key")
+  user      user       @relation(fields: [userId], references: [id], map: "Cart_userId_fkey")
+  cartitem  cartitem[]
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
-model Cart {
-  id        String    @id @default(cuid())
-  userId    String    @unique
-  user      User      @relation(fields: [userId], references: [id])
-  items     CartItem[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-}
-
-model CartItem {
-  id        String    @id @default(cuid())
+model cartitem {
+  id        String   @id
   cartId    String
-  cart      Cart      @relation(fields: [cartId], references: [id])
-  product   Product   @relation(fields: [productId], references: [id])
   productId String
   quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  cart      cart     @relation(fields: [cartId], references: [id], map: "CartItem_cartId_fkey")
+  product   product  @relation(fields: [productId], references: [id], map: "CartItem_productId_fkey")
+
+  @@index([cartId], map: "CartItem_cartId_fkey")
+  @@index([productId], map: "CartItem_productId_fkey")
+}
+
+model category {
+  id             String     @id
+  name           String     @unique(map: "Category_name_key")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime
+  level          Int        @default(1)
+  parentId       String?
+  slug           String?    @unique(map: "Category_slug_key")
+  category       category?  @relation("categoryTocategory", fields: [parentId], references: [id], map: "Category_parentId_fkey")
+  other_category category[] @relation("categoryTocategory")
+  product        product[]
+
+  @@index([parentId], map: "Category_parentId_fkey")
+}
+
+model orderitem {
+  id        String  @id
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+  orders    orders  @relation(fields: [orderId], references: [id], map: "OrderItem_orderId_fkey")
+  product   product @relation(fields: [productId], references: [id], map: "OrderItem_productId_fkey")
+
+  @@index([orderId], map: "OrderItem_orderId_idx")
+  @@index([productId], map: "OrderItem_productId_idx")
+}
+
+model orders {
+  id             String          @id
+  userId         String
+  status         String
+  paymentId      String?
+  total          Decimal         @db.Decimal(10, 2)
+  installments   Int             @default(1)
+  paymentMethod  String?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime
+  orderitem      orderitem[]
+  user           user            @relation(fields: [userId], references: [id], map: "Orders_userId_fkey")
+  paymentdetails paymentdetails?
+  stockmovement  stockmovement[]
+
+  @@index([userId], map: "Orders_userId_fkey")
+}
+
+model paymentdetails {
+  id                  String    @id
+  orderId             String    @unique(map: "PaymentDetails_orderId_key")
+  paymentType         String
+  expirationDate      DateTime?
+  paymentInstructions Json?
+  additionalData      Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime
+  orders              orders    @relation(fields: [orderId], references: [id], map: "PaymentDetails_orderId_fkey")
+
+  @@index([orderId], map: "PaymentDetails_orderId_idx")
+}
+
+model product {
+  id            String          @id
+  name          String          @unique(map: "Product_name_key")
+  description   String?
+  price         Decimal         @db.Decimal(10, 2)
+  imageUrl      String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime
+  active        Boolean         @default(true)
+  featured      Boolean         @default(false)
+  stock         Int             @default(0)
+  categoryId    String?
+  cartitem      cartitem[]
+  orderitem     orderitem[]
+  category      category?       @relation(fields: [categoryId], references: [id], map: "Product_categoryId_fkey")
+  stockmovement stockmovement[]
+
+  @@index([categoryId], map: "Product_categoryId_fkey")
+}
+
+model stockmovement {
+  id           String                     @id
+  productId    String
+  quantity     Int
+  reason       String
+  movementType stockmovement_movementType
+  orderId      String?
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime
+  orders       orders?                    @relation(fields: [orderId], references: [id], map: "StockMovement_orderId_fkey")
+  product      product                    @relation(fields: [productId], references: [id], map: "StockMovement_productId_fkey")
+
+  @@index([orderId], map: "StockMovement_orderId_idx")
+  @@index([productId], map: "StockMovement_productId_idx")
+}
+
+model user {
+  id        String    @id
+  email     String    @unique(map: "User_email_key")
+  password  String
+  name      String?
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime
+  role      user_role @default(USER)
+  cart      cart?
+  orders    orders[]
 }
 
-model Product {
-  id          String      @id @default(cuid())
-  name        String      @unique
-  description String?
-  price       Decimal     @db.Decimal(10,2)
-  imageUrl    String?
-  featured    Boolean     @default(false)
-  active      Boolean     @default(true)
-  stock       Int         @default(0)
-  categoryId  String?     
-  category    Category?   @relation(fields: [categoryId], references: [id])
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  cartItems   CartItem[]
-  orderItems  OrderItem[]
-  stockMovements StockMovement[]
-}
-
-model Category {
-  id          String      @id @default(cuid())
-  name        String      @unique
-  slug        String?     @unique // Para URLs amigables
-  parentId    String?     // Para identificar la categoría padre
-  parent      Category?   @relation("CategoryHierarchy", fields: [parentId], references: [id])
-  children    Category[]  @relation("CategoryHierarchy")
-  level       Int         @default(1) // 1 para categorías principales, 2 para subcategorías
-  products    Product[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-}
-
-enum MovementType {
+enum stockmovement_movementType {
   SALE
   RETURN
   ADJUSTMENT
   RESTOCK
 }
 
-model StockMovement {
-  id          String      @id @default(cuid())
-  productId   String
-  product     Product     @relation(fields: [productId], references: [id])
-  quantity    Int         // Negativo para salidas, positivo para entradas
-  reason      String
-  movementType MovementType
-  orderId     String?
-  order       Orders?     @relation(fields: [orderId], references: [id])
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@index([productId])
-  @@index([orderId])
-}
-
-
-model Orders {  
-  id              String      @id @default(cuid())
-  userId          String
-  user            User        @relation(fields: [userId], references: [id])
-  status          String
-  paymentId       String?
-  total           Decimal     @db.Decimal(10,2)
-  installments    Int         @default(1)
-  paymentMethod   String?
-  items           OrderItem[]
-  paymentDetails  PaymentDetails?
-  stockMovements  StockMovement[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-}
-
-model OrderItem {
-  id        String    @id @default(cuid())
-  order     Orders    @relation(fields: [orderId], references: [id])
-  orderId   String
-  product   Product   @relation(fields: [productId], references: [id])
-  productId String
-  quantity  Int
-  price     Decimal   @db.Decimal(10,2)
-
-  @@index([orderId])
-  @@index([productId])
-}
-
-model PaymentDetails {
-  id                  String    @id @default(cuid())
-  orderId            String    @unique
-  order              Orders    @relation(fields: [orderId], references: [id])
-  paymentType        String    // ticket, bank_transfer, credit_card, etc.
-  expirationDate     DateTime?
-  paymentInstructions Json?    // Instrucciones específicas del pago
-  additionalData     Json?     // Datos adicionales del pago
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-
-  @@index([orderId])
+enum user_role {
+  USER
+  ADMIN
 }
