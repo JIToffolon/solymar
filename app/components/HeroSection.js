@@ -52,6 +52,8 @@ const ProductInfo = React.memo(({ product }) => {
     }
   };
 
+  ProductInfo.displayName='ProductInfo';
+
   return (
     <>
       <div className="h-[25%] p-2 md:p-8 flex flex-col justify-between">

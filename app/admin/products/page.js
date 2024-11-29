@@ -28,10 +28,7 @@ const AdminProducts = () => {
 
   const limit = 10;
 
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, [currentPage]);
+  
 
   const fetchProducts = useCallback(async () => {
     const res = await fetch(
@@ -42,9 +39,10 @@ const AdminProducts = () => {
     setTotalPages(data.totalPages);
   },[currentPage]);
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchProducts();
-  },[fetchProducts]);
+    fetchCategories();
+  }, [currentPage,fetchProducts]);
 
   const fetchCategories = async () => {
     try {
