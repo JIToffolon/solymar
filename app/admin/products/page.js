@@ -40,7 +40,7 @@ const AdminProducts = () => {
     const data = await res.json();
     setProducts(data.products);
     setTotalPages(data.totalPages);
-  },[]);
+  },[currentPage]);
 
   useEffect(()=>{
     fetchProducts();

@@ -102,6 +102,8 @@ const HeroContent = React.memo(() => (
   </div>
 ));
 
+HeroContent.displayName = "HeroContent";
+
 const ProductCarousel = React.memo(
   ({ products, activeIndex, onNext, onPrev }) => (
     <div className="w-full lg:col-span-7 lg:mt-0">
@@ -128,7 +130,7 @@ const ProductCarousel = React.memo(
     </div>
   )
 );
-
+ProductCarousel.displayName = "ProductCarousel";
 const CarouselItem = React.memo(({ product }) => (
   <motion.div
     initial={{ opacity: 0, x: 50 }}
@@ -159,7 +161,7 @@ const CarouselItem = React.memo(({ product }) => (
     </Link>
   </motion.div>
 ));
-
+CarouselItem.displayName = "CarouselItem";
 const CarouselControls = ({ length, activeIndex, onNext, onPrev }) => (
   <div className="absolute -bottom-12 md:-bottom-16 left-1/2 transform -translate-x-1/2 flex items-center gap-4 md:gap-6">
     <button
@@ -200,7 +202,7 @@ const HeroSection = ({
   return (
     <section className="relative min-h-[800px] md:h-[950px] lg:h-[1000px] mt-10 mx-5 bg-gradient-to-r from-red-500 to-red-800 rounded-xl p-4 md:p-6 lg:p-8">
       <div className="absolute inset-0 flex items-center w-full">
-      <CategoryNav/>
+        <CategoryNav />
         <div className="container mx-auto px-4 ">
           <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 md:gap-6 lg:gap-8 items-center">
             <HeroContent />

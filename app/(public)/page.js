@@ -43,7 +43,7 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
-  },[]);
+  },[featuredProducts.length]);
 
   // Efecto para cargar productos
   useEffect(() => {
