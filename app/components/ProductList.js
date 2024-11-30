@@ -2,8 +2,11 @@
 import { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
 import Pagination from "./Pagination";
+import { useSearchParams } from "next/navigation";
 
 const ProductList = ({ selectedCategory, searchQuery, sortBy, priceRange }) => {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get('category');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,8 +22,8 @@ const ProductList = ({ selectedCategory, searchQuery, sortBy, priceRange }) => {
 
         const params = new URLSearchParams();
         // Modificar cómo enviamos el categoryId
-        if (selectedCategory) {
-          params.set("categoryId", selectedCategory);
+        if (categoryParam) {
+          params.set("categoryId", categoryParam);
           // Agregar un parámetro para indicar si debemos incluir subcategorías
           params.set("includeSubcategories", "true");
         }
@@ -58,12 +61,12 @@ const ProductList = ({ selectedCategory, searchQuery, sortBy, priceRange }) => {
     };
 
     fetchProducts();
-  }, [selectedCategory, searchQuery, sortBy, priceRange, currentPage]);
+  }, [categoryParam, searchQuery, sortBy, priceRange, currentPage]);
 
   // Reset currentPage when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, searchQuery, sortBy, priceRange]);
+  }, [categoryParam, searchQuery, sortBy, priceRange]);
 
   if (loading) {
     return (

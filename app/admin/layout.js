@@ -1,6 +1,6 @@
 "use client";
 import "../globals.css";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -77,9 +77,23 @@ const menuItems = [
 ];
 
 export default function AdminLayout({ children }) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
+  //Side diferentes tamaños de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setIsSidebarOpen(true);
+      } 
+    };
+
+    // Establecer estado inicial
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const SidebarContent = useMemo(
     () => (
@@ -106,11 +120,21 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className={`${roboto.className} min-h-screen bg-gray-50`}>
-      <aside
-        className={`fixed top-0 left-0 z-40 h-screen transition-transform ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } w-64 bg-white shadow-lg`}
-      >
+      {/* Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 lg:hidden z-30"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`
+        fixed top-0 left-0 z-40 h-screen w-64 bg-white shadow-lg
+        transform transition-transform duration-300 ease-in-out
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+        lg:translate-x-0 // Siempre visible en desktop
+      `}>
         <div className="flex items-center justify-between px-4 py-6 border-b">
           <Link href="/admin" className="text-xl font-bold text-red-600">
             Admin Panel
@@ -119,28 +143,71 @@ export default function AdminLayout({ children }) {
             onClick={() => setIsSidebarOpen(false)}
             className="lg:hidden text-gray-500 hover:text-gray-700"
           >
-            <svg>...</svg>
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
           </button>
         </div>
-        {SidebarContent}
+        {/* Contenido del Sidebar */}
+        <nav className="px-4 py-6">
+          <ul className="space-y-2">
+            {menuItems.map(({ path, icon, title }) => (
+              <li key={path}>
+                <Link
+                  href={path}
+                  className={`flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-red-50 hover:text-red-600 transition-colors ${
+                    pathname === path ? "bg-red-50 text-red-600" : ""
+                  }`}
+                  onClick={() => {
+                    if (window.innerWidth < 1024) {
+                      setIsSidebarOpen(false);
+                    }
+                  }}
+                >
+                  {icon}
+                  <span className="ml-3">{title}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
       </aside>
 
-      <div
-        className={`lg:ml-64 transition-margin ${
-          isSidebarOpen ? "ml-64" : "ml-0"
-        }`}
-      >
+      {/* Contenido principal */}
+      <div className={`lg:ml-64 transition-all duration-300`}>
         <header className="bg-white shadow-sm">
           <div className="flex items-center justify-between px-4 py-4">
             <button
-              onClick={() => setIsSidebarOpen((prev) => !prev)}
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="lg:hidden text-gray-500 hover:text-gray-700"
             >
-              <svg>...</svg>
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              </svg>
             </button>
 
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 font-['Roboto']">
+              <span className="hidden sm:inline text-sm text-gray-600">
                 {session?.user?.email}
               </span>
               <Link

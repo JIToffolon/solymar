@@ -102,7 +102,7 @@ const AdminDashboard = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
 
-        <div className="flex space-x-2 bg-white rounded-lg shadow">
+        {/* <div className="flex space-x-2 bg-white rounded-lg shadow">
           <button
             onClick={() => setDateRange("week")}
             className={`px-4 py-2 rounded-lg ${
@@ -127,11 +127,11 @@ const AdminDashboard = () => {
           >
             12 meses
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-gray-700">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 text-gray-700">
         <StatCard
           title="Ventas Totales"
           value={formatCurrency(stats.totalSales)}
@@ -162,13 +162,13 @@ const AdminDashboard = () => {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Ventas Mensuales */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">
             Ventas Mensuales
           </h3>
-          <div className="h-80">
+          <div className="h-60 sm:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={stats.monthlySales || []}>
                 <CartesianGrid
@@ -236,8 +236,8 @@ const AdminDashboard = () => {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Órdenes Recientes
           </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+          <div className="overflow-x-auto -mx-4 sm:mx-0">
+            <table className="min-w-full">
               <thead>
                 <tr className="text-left text-sm font-medium text-gray-500 border-b">
                   <th className="pb-4 pr-6">ID</th>

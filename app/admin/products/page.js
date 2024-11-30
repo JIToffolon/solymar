@@ -28,8 +28,6 @@ const AdminProducts = () => {
 
   const limit = 10;
 
-  
-
   const fetchProducts = useCallback(async () => {
     const res = await fetch(
       `/api/admin/products?page=${currentPage}&limit=${limit}`
@@ -37,12 +35,12 @@ const AdminProducts = () => {
     const data = await res.json();
     setProducts(data.products);
     setTotalPages(data.totalPages);
-  },[currentPage]);
+  }, [currentPage]);
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, [currentPage,fetchProducts]);
+  }, [currentPage, fetchProducts]);
 
   const fetchCategories = async () => {
     try {
@@ -200,86 +198,113 @@ const AdminProducts = () => {
 
         {/* Tabla */}
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Producto
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Categoría
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Precio
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Stock
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="h-10 w-10 flex-shrink-0">
-                        <Image
-                          className="h-10 w-10 rounded-md object-cover"
-                          src={product.imageUrl || "/placeholder.png"}
-                          alt=""
-                          width={100}
-                          height={100}
-                        />
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {product.name}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {product.category?.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    ${product.price}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
-                    {product.stock}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium">
-                    <div className="flex space-x-3">
-                      <button
-                        onClick={() => {
-                          setCurrentProduct(product);
-                          setFormData({ ...product });
-                          setShowModal(true);
-                        }}
-                        className="text-indigo-600 hover:text-indigo-900"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(product.id)}
-                        className="text-red-600 hover:text-red-900"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+          {/* Contenedor con scroll horizontal */}
+          <div className="overflow-x-auto">
+            <div className="min-w-full inline-block align-middle">
+              <div className="overflow-hidden">
+                <table className="min-w-full divide-y divide-gray-200">
+                  {/* Header de la tabla */}
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                        Producto
+                      </th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Categoría
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Precio
+                      </th>
+                      <th className="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Stock
+                      </th>
+                      <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Acciones
+                      </th>
+                    </tr>
+                  </thead>
+
+                  {/* Cuerpo de la tabla */}
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredProducts.map((product) => (
+                      <tr key={product.id} className="hover:bg-gray-50">
+                        {/* Celda de Producto */}
+                        <td className="px-3 sm:px-6 py-4">
+                          <div className="flex items-center">
+                            <div className="h-10 w-10 flex-shrink-0">
+                              <Image
+                                className="h-10 w-10 rounded-md object-cover"
+                                src={product.imageUrl || "/placeholder.png"}
+                                alt=""
+                                width={100}
+                                height={100}
+                              />
+                            </div>
+                            <div className="ml-2 sm:ml-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {product.name}
+                              </div>
+                              {/* Mostrar categoría en móvil */}
+                              <div className="sm:hidden text-xs text-gray-500">
+                                {product.category?.name}
+                              </div>
+                              {/* Mostrar stock en móvil */}
+                              <div className="sm:hidden text-xs text-gray-500">
+                                Stock: {product.stock}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Celda de Categoría - Oculta en móvil */}
+                        <td className="hidden sm:table-cell px-6 py-4 text-sm text-gray-500">
+                          {product.category?.name}
+                        </td>
+
+                        {/* Celda de Precio */}
+                        <td className="px-3 sm:px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                          ${product.price}
+                        </td>
+
+                        {/* Celda de Stock - Oculta en móvil */}
+                        <td className="hidden sm:table-cell px-6 py-4 text-sm text-gray-500">
+                          {product.stock}
+                        </td>
+
+                        {/* Celda de Acciones */}
+                        <td className="px-3 sm:px-6 py-4 text-sm font-medium whitespace-nowrap">
+                          <div className="flex space-x-2 sm:space-x-3">
+                            <button
+                              onClick={() => {
+                                setCurrentProduct(product);
+                                setFormData({ ...product });
+                                setShowModal(true);
+                              }}
+                              className="text-indigo-600 hover:text-indigo-900"
+                            >
+                              <Edit2 size={18} />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(product.id)}
+                              className="text-red-600 hover:text-red-900"
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         {/* Modal */}
         {showModal && (

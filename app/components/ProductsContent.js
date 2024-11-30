@@ -51,7 +51,7 @@ export default function ProductsContent() {
           <div className="lg:sticky lg:top-4">
             <CategorySidebar
               onCategorySelect={handleCategorySelect}
-              initialSelected={selectedCategory}
+              initialSelected={categoryParam}
             />
           </div>
         </div>
